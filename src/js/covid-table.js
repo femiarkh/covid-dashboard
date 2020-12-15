@@ -1,7 +1,9 @@
 import createElement from './utils/create-element';
 import Switchers from './switchers';
 import SELECTS from './const/selects';
+import PARAMETERS from './const/parameters';
 import addCommas from './utils/add-commas';
+import countPer100k from './utils/count-per-100k';
 
 /**
  * Get markup for the Covid Table.
@@ -19,15 +21,15 @@ function getCovidTableMarkup() {
           </tr>
           <tr class="covid-table__row">
             <td class="covid-table__stat-name">Cases:</td>
-            <td class="covid-table__stat-value covid-table__stat-value--cases">69,765,806</td>
+            <td class="covid-table__stat-value covid-table__stat-value--cases">No data yet</td>
           </tr>
           <tr class="covid-table__row">
             <td class="covid-table__stat-name">Deaths:</td>
-            <td class="covid-table__stat-value covid-table__stat-value--deaths">1,583,211</td>
+            <td class="covid-table__stat-value covid-table__stat-value--deaths">No data yet</td>
           </tr>
           <tr class="covid-table__row">
             <td class="covid-table__stat-name">Recovered:</td>
-            <td class="covid-table__stat-value covid-table__stat-value--recovered">44,924,269</td>
+            <td class="covid-table__stat-value covid-table__stat-value--recovered">No data yet</td>
           </tr>`;
 }
 
@@ -42,16 +44,59 @@ export default class CovidTable {
     this.casesContainer = this.element.querySelector('.covid-table__stat-value--cases');
     this.deathsContainer = this.element.querySelector('.covid-table__stat-value--deaths');
     this.recoveredContainer = this.element.querySelector('.covid-table__stat-value--recovered');
+
+    this.period = PARAMETERS.period.allTime;
+    this.valueType = PARAMETERS.valueType.absolute;
   }
 
+  /**
+   * Update data in the table according to current select options.
+   */
   updateData() {
     const url = 'https://disease.sh/v3/covid-19/all';
     fetch(url)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        return response.json();
+      })
       .then((data) => {
-        this.casesContainer.textContent = addCommas(data.cases);
-        this.deathsContainer.textContent = addCommas(data.deaths);
-        this.recoveredContainer.textContent = addCommas(data.recovered);
-      });
+        if (this.period === PARAMETERS.period.allTime) {
+          if (this.valueType === PARAMETERS.valueType.absolute) {
+            this.casesContainer.textContent = addCommas(data.cases);
+            this.deathsContainer.textContent = addCommas(data.deaths);
+            this.recoveredContainer.textContent = addCommas(data.recovered);
+          } else {
+            this.casesContainer.textContent = addCommas(data.casesPerOneMillion);
+            this.deathsContainer.textContent = addCommas(data.deathsPerOneMillion);
+            this.recoveredContainer.textContent = addCommas(data.recoveredPerOneMillion);
+          }
+        } else if (this.period === PARAMETERS.period.lastDay) {
+          if (this.valueType === PARAMETERS.valueType.absolute) {
+            this.casesContainer.textContent = addCommas(data.todayCases);
+            this.deathsContainer.textContent = addCommas(data.todayDeaths);
+            this.recoveredContainer.textContent = addCommas(data.todayRecovered);
+          } else {
+            const todayCasesPer100k = countPer100k(data.todayCases, data.population);
+            const todayDeathsPer100k = countPer100k(data.todayDeaths, data.population);
+            const todayRecoveredPer100k = countPer100k(data.todayRecovered, data.population);
+            this.casesContainer.textContent = addCommas(todayCasesPer100k);
+            this.deathsContainer.textContent = addCommas(todayDeathsPer100k);
+            this.recoveredContainer.textContent = addCommas(todayRecoveredPer100k);
+          }
+        }
+      })
+      .catch((err) => err);
+  }
+
+  /**
+   * Update this.period and this.valueType every time select is changed.
+   */
+  bindSelectChange() {
+    this.switchersContainer.addEventListener('change', (evt) => {
+      this[evt.target.name] = evt.target.value;
+      this.updateData();
+    });
   }
 }
