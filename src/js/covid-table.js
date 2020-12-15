@@ -1,6 +1,7 @@
 import createElement from './utils/create-element';
 import Switchers from './switchers';
 import SELECTS from './const/selects';
+import addCommas from './utils/add-commas';
 
 /**
  * Get markup for the Covid Table.
@@ -41,5 +42,16 @@ export default class CovidTable {
     this.casesContainer = this.element.querySelector('.covid-table__stat-value--cases');
     this.deathsContainer = this.element.querySelector('.covid-table__stat-value--deaths');
     this.recoveredContainer = this.element.querySelector('.covid-table__stat-value--recovered');
+  }
+
+  updateData() {
+    const url = 'https://disease.sh/v3/covid-19/all';
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        this.casesContainer.textContent = addCommas(data.cases);
+        this.deathsContainer.textContent = addCommas(data.deaths);
+        this.recoveredContainer.textContent = addCommas(data.recovered);
+      });
   }
 }
