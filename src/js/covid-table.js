@@ -100,7 +100,7 @@ export default class CovidTable {
   }
 
   /**
-   * Update this.period and this.valueType every time select is changed.
+   * Update state of the table every time select is changed.
    */
   bindSelectChange() {
     this.switchersContainer.addEventListener('change', (evt) => {
