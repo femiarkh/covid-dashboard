@@ -45,16 +45,25 @@ export default class CovidTable {
     this.deathsContainer = this.element.querySelector('.covid-table__stat-value--deaths');
     this.recoveredContainer = this.element.querySelector('.covid-table__stat-value--recovered');
 
+    this.country = null;
     this.period = PARAMETERS.period.allTime;
     this.valueType = PARAMETERS.valueType.absolute;
   }
 
   /**
    * Update data in the table according to current select options.
+   * @param {string} - Name of a country. If there is none, whole world data will be displayed.
    */
-  updateData() {
-    const url = 'https://disease.sh/v3/covid-19/all';
-    fetch(url)
+  updateData(country) {
+    const commonURL = 'https://disease.sh/v3/covid-19';
+    let specificURL;
+    if (country) {
+      specificURL = `${commonURL}/countries/${country}?strict=true`;
+    } else {
+      specificURL = `${commonURL}/all`;
+    }
+
+    fetch(specificURL)
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -96,7 +105,7 @@ export default class CovidTable {
   bindSelectChange() {
     this.switchersContainer.addEventListener('change', (evt) => {
       this[evt.target.name] = evt.target.value;
-      this.updateData();
+      this.updateData(this.country);
     });
   }
 }
