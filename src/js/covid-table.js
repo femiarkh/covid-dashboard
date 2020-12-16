@@ -97,6 +97,10 @@ export default class CovidTable {
         }
       })
       .catch((err) => err);
+
+    if (country) {
+      this.locationContainer.textContent = country;
+    }
   }
 
   /**
