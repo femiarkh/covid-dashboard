@@ -1,3 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+$font-color: #1a1a1a;
+$borders-color: #000;
+$headers-background: #d2dccb;
+$main-background: #fcfbf2;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html {
+  font-family: 'Roboto', Verdana, Arial, sans-serif;
   font-size: 10px;
+  color: $font-color;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1280px;
+  min-height: 100vh;
+  margin: 0 auto;
+}
+
+#root {
+  width: 100%;
+}
+
+.app-name {
+  font-size: 4rem;
+  text-align: center;
+}
+
+.covid-table {
+  min-width: 25%;
+  font-size: 2.4rem;
+  border: 1px solid $borders-color;
+  border-collapse: collapse;
+}
+
+.covid-table__location {
+  padding: 10px;
+  border: 1px solid $borders-color;
+  background-color: $headers-background;
+}
+
+.covid-table__switchers {
+  text-align: center;
+}
+
+.covid-table__row td {
+  padding: 10px;
+  background-color: $main-background;
+}
+
+.covid-table__stat-value {
+  text-align: right;
 }
