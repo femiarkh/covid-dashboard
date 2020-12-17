@@ -2,6 +2,11 @@ import createElement from './utils/create-element';
 import SELECTS from './const/selects';
 import Switchers from './switchers';
 
+/**
+ * Get markup for the Covid List.
+ * @param {function} - takes Data Base
+ * @returns {DOM element} - DOM element with Covid-list.
+ */
 export default class List {
 	constructor(dataBase) {
 		this.dataBase = dataBase;
@@ -14,14 +19,30 @@ export default class List {
 			Absolute: false,
 			'Per 100k': true,
 		};
+
+		/**
+ * Creates switchers to the body of the list
+ * @returns {DOM element} - add switchers.
+ */
 		this.createQueryCountry = () => {
 			document.querySelector('.list__sortingСriteria')
 				.append(new Switchers(SELECTS.listSelects).element);
 		};
-		this.returnSwitchersEl = (el) => {
+
+		/**
+ * Returns the value input
+ * @param {number} - takes the seat number in switchers
+ * @returns {string} - the value select
+ */
+		this.returnSwitchersEl = (num) => {
 			const switchersEl = document.querySelectorAll('.switchers__switcher');
-			return switchersEl[el].options[switchersEl[el].options.selectedIndex].text;
+			return switchersEl[num].options[switchersEl[num].options.selectedIndex].text;
 		};
+
+		/**
+ * Remove all list items
+ * @returns {} - clear list items
+ */
 		this.clearListCountry = () => {
 			if (document.querySelectorAll('.listCountry__countryEl')) {
 				document.querySelectorAll('.listCountry__countryEl').forEach((element) => {
@@ -29,12 +50,11 @@ export default class List {
 				});
 			}
 		};
-		this.setFocus = () => {
-			document.querySelector('.list__inputCountry').value = '';
-			Object.assign(document.querySelector('.list').style, { width: '100%', position: 'absolute' });
-			Object.assign(document.querySelector('.switchers').style, { top: '-6rem' });
-			Object.assign(document.querySelector('.list__listCountry').style, { top: '-6rem' });
-		};
+
+		/**
+ * Change the appearance of the list
+ * @returns {css style} - changes css style
+ */
 		this.setFocus = () => {
 			document.querySelector('.list__inputCountry').value = '';
 			Object.assign(document.querySelector('.list').style, { width: '100%', position: 'absolute' });
@@ -43,6 +63,14 @@ export default class List {
 		};
 	}
 
+	/**
+	 * Get markup for the List.
+	 * @param {string} - the string by which sorting occurs
+	 * @param {string} - value from first select
+	 * @param {string} - value from second select
+	 * @param {string}  - value from third select
+	 * @returns {DOM element} - DOM element with list elements.
+	 */
 	createListCountry(sorter, valueName = this.returnSwitchersEl(0),
 		period = this.returnSwitchersEl(1), valueType = this.returnSwitchersEl(2)) {
 		let valueNameNow = this.returnSettingKeys[valueName];
@@ -89,12 +117,17 @@ export default class List {
 		});
 	}
 
+	/**
+* Change the appearance of the list
+* @returns {css style} - changes css style
+*/
 	clearFocus() {
 		document.querySelector('.list__inputCountry').value = '[enter country]';
 
 		if (document.querySelector('.searchBody')) {
 			document.querySelector('.searchBody').remove();
 		}
+
 		this.clearListCountry();
 		this.createListCountry();
 
@@ -103,6 +136,11 @@ export default class List {
 		Object.assign(document.querySelector('.switchers').style, { top: '-0rem' });
 	}
 
+	/**
+* Sorts the list of countries
+* @param {letter} - the characters by which the list is sorted
+* @returns {DOM element} - new list of countries
+*/
 	changeSearch(e) {
 		Object.assign(document.querySelector('.list__listCountry').style, { opacity: '0' });
 		setTimeout(() => {
@@ -128,18 +166,30 @@ export default class List {
 		}, 750);
 	}
 
+	/**
+* EventListener on click to input
+* @returns {EventListener} - add eventListener to input
+*/
 	clickInputCountry() {
 		document.querySelector('.list__inputCountry').addEventListener('click', () => {
 			this.setFocus();
 		});
 	}
 
+	/**
+* EventListener on blur to input
+* @returns {EventListener} - add eventListener to inputs
+*/
 	blurInputCountry() {
 		document.querySelector('.list__inputCountry').addEventListener('blur', () => {
 			this.clearFocus();
 		});
 	}
 
+	/**
+* EventListener on keyup to input
+* @returns {EventListener} - adds a restriction on entered characters
+*/
 	keyPressInputCountry() {
 		document.querySelector('.list__inputCountry').addEventListener('keyup', (e) => {
 			e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '');
@@ -147,6 +197,10 @@ export default class List {
 		});
 	}
 
+	/**
+* Get markup for the body list.
+* @returns {DOM element} - DOM element with list elements.
+*/
 	createList() {
 		document.querySelector('#root').append(createElement('div', 'list', ''));
 
