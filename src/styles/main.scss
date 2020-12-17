@@ -29,15 +29,20 @@ body {
 
 #root {
   width: 100%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .app-name {
+  width: 100%;
+  margin-bottom: 40px;
   font-size: 4rem;
   text-align: center;
 }
 
 .covid-table {
   min-width: 25%;
+  margin-right: 40px;
   font-size: 2.4rem;
   border: 1px solid $borders-color;
   border-collapse: collapse;
@@ -60,4 +65,8 @@ body {
 
 .covid-table__stat-value {
   text-align: right;
+}
+
+.covid-chart {
+  width: 45%;
 }
