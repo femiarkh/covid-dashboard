@@ -4,7 +4,7 @@ import Switchers from './switchers';
 
 /**
  * Get markup for the Covid List.
- * @param {function} - takes Data Base
+ * @param {function} - takes Data Base.
  * @returns {DOM element} - DOM element with Covid-list.
  */
 export default class List {
@@ -21,7 +21,7 @@ export default class List {
 		};
 
 		/**
- * Creates switchers to the body of the list
+ * Creates switchers to the body of the list.
  * @returns {DOM element} - add switchers.
  */
 		this.createQueryCountry = () => {
@@ -30,9 +30,9 @@ export default class List {
 		};
 
 		/**
- * Returns the value input
- * @param {number} - takes the seat number in switchers
- * @returns {string} - the value select
+ * Returns the value input.
+ * @param {number} - takes the seat number in switchers.
+ * @returns {string} - the value select.
  */
 		this.returnSwitchersEl = (num) => {
 			const switchersEl = document.querySelectorAll('.switchers__switcher');
@@ -40,8 +40,8 @@ export default class List {
 		};
 
 		/**
- * Remove all list items
- * @returns {} - clear list items
+ * Remove all list items.
+ * @returns {} - clear list items.
  */
 		this.clearListCountry = () => {
 			if (document.querySelectorAll('.listCountry__countryEl')) {
@@ -52,8 +52,8 @@ export default class List {
 		};
 
 		/**
- * Change the appearance of the list
- * @returns {css style} - changes css style
+ * Change the appearance of the list.
+ * @returns {css style} - changes css style.
  */
 		this.setFocus = () => {
 			document.querySelector('.list__inputCountry').value = '';
@@ -65,10 +65,10 @@ export default class List {
 
 	/**
 	 * Get markup for the List.
-	 * @param {string} - the string by which sorting occurs
-	 * @param {string} - value from first select
-	 * @param {string} - value from second select
-	 * @param {string}  - value from third select
+	 * @param {string} - the string by which sorting occurs.
+	 * @param {string} - value from first select.
+	 * @param {string} - value from second select.
+	 * @param {string}  - value from third select.
 	 * @returns {DOM element} - DOM element with list elements.
 	 */
 	createListCountry(sorter, valueName = this.returnSwitchersEl(0),
@@ -118,8 +118,8 @@ export default class List {
 	}
 
 	/**
-* Change the appearance of the list
-* @returns {css style} - changes css style
+* Change the appearance of the list.
+* @returns {css style} - changes css style.
 */
 	clearFocus() {
 		document.querySelector('.list__inputCountry').value = '[enter country]';
@@ -137,9 +137,9 @@ export default class List {
 	}
 
 	/**
-* Sorts the list of countries
-* @param {letter} - the characters by which the list is sorted
-* @returns {DOM element} - new list of countries
+* Sorts the list of countries.
+* @param {letter} - the characters by which the list is sorted.
+* @returns {DOM element} - new list of countries.
 */
 	changeSearch(e) {
 		Object.assign(document.querySelector('.list__listCountry').style, { opacity: '0' });
@@ -167,8 +167,8 @@ export default class List {
 	}
 
 	/**
-* EventListener on click to input
-* @returns {EventListener} - add eventListener to input
+* EventListener on click to input.
+* @returns {EventListener} - add eventListener to input.
 */
 	clickInputCountry() {
 		document.querySelector('.list__inputCountry').addEventListener('click', () => {
@@ -177,8 +177,8 @@ export default class List {
 	}
 
 	/**
-* EventListener on blur to input
-* @returns {EventListener} - add eventListener to inputs
+* EventListener on blur to input.
+* @returns {EventListener} - add eventListener to inputs.
 */
 	blurInputCountry() {
 		document.querySelector('.list__inputCountry').addEventListener('blur', () => {
@@ -187,8 +187,8 @@ export default class List {
 	}
 
 	/**
-* EventListener on keyup to input
-* @returns {EventListener} - adds a restriction on entered characters
+* EventListener on keyup to input.
+* @returns {EventListener} - adds a restriction on entered characters.
 */
 	keyPressInputCountry() {
 		document.querySelector('.list__inputCountry').addEventListener('keyup', (e) => {
