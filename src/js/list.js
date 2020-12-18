@@ -131,7 +131,7 @@ export default class List {
 		this.clearListCountry();
 		this.createListCountry();
 
-		Object.assign(document.querySelector('.list').style, { width: '25%', position: 'relative' });
+		Object.assign(document.querySelector('.list').style, { width: '40rem', position: 'relative' });
 		Object.assign(document.querySelector('.list__listCountry').style, { 'background-image': 'none', top: '-0rem' });
 		Object.assign(document.querySelector('.switchers').style, { top: '-0rem' });
 	}

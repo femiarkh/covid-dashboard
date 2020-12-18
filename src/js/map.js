@@ -19,6 +19,26 @@ export default class List {
 			Absolute: false,
 			'Per 100k': true,
 		};
+		this.mapOptions = {
+			center: [0, 0],
+			zoom: 2,
+			worldCopyJump: true,
+		};
+		this.circleOptions = {
+			fill: 'true',
+			color: 'red',
+			fillColor: '#f03',
+			fillRule: 'nonzero',
+			fillOpacity: 0.4,
+			weight: 3,
+		};
+		this.geoOptions = {
+			color: 'blue',
+			fillColor: '#f03',
+			fillRule: 'nonzero',
+			fillOpacity: 0.1,
+			weight: 2,
+		};
 
 		/**
 * Creates switchers to the body of the list.
@@ -28,12 +48,46 @@ export default class List {
 			document.querySelector('.map__sortingСriteria')
 				.append(new Switchers(SELECTS.listSelects).element);
 		};
+		/**
+		* Returns the value input.
+		* @param {number} - takes the seat number in switchers.
+		* @returns {string} - the value select.
+		*/
+		this.returnSwitchersEl = (num) => {
+			const switchersEl = document.querySelectorAll('.switchers__switcher');
+			return switchersEl[num].options[switchersEl[num].options.selectedIndex].text;
+		};
 	}
 
-	/**
-* Get markup for the body map.
-* @returns {DOM element} - DOM element with map elements.
-*/
+	createMapBody() {
+		// let valueNameNow = this.returnSettingKeys[valueName];
+		// const periodNow = this.returnSettingKeys[period];
+		// const valueTypeNow = this.returnSettingKeys[valueType];
+
+		// if (periodNow) {
+		// 	valueNameNow = periodNow + valueName[0].toUpperCase() + valueName.slice(1);
+		// }
+
+		const map = new L.Map('mapid', this.mapOptions);
+		const layer = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', { maxZoom: 10 });
+		map.addLayer(layer);
+
+		this.dataBase.then((result) => {
+			result.forEach((element) => {
+				fetch(`https://raw.githubusercontent.com/johan/world.geo.json/master/countries/${element.countryInfo.iso3}.geo.json`)
+					.then((res) => res.json())
+					.then((data) => {
+						L.geoJSON(data, this.geoOptions).bindPopup(`${element.country}`).addTo(map);
+					})
+					.then(() => {
+						const circle = L.circle([element.countryInfo.lat, element.countryInfo.long],
+							element.cases / 11, this.circleOptions).bindPopup((`${element.country}`));
+						circle.addTo(map);
+					});
+			});
+		});
+	}
+
 	createMap() {
 		document.querySelector('#root').append(createElement('div', 'map', ''));
 		const mapBody = document.querySelector('.map');
@@ -42,6 +96,12 @@ export default class List {
 		this.createQueryCountry();
 
 		this.bindSelectChange();
+
+		const mapid = document.createElement('div');
+		mapid.id = 'mapid';
+		mapBody.appendChild(mapid);
+
+		this.createMapBody();
 	}
 
 	bindSelectChange() {

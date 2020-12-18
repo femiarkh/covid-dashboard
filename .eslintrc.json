@@ -8,11 +8,27 @@
 		"browser": true
 	},
 	"rules": {
+		"lines-between-class-members": [
+			"error",
+			"always",
+			{
+				"exceptAfterSingleLine": true
+			}
+		],
 		"linebreak-style": 0,
 		"indent": [
 			2,
 			"tab"
 		],
-		"no-tabs": 0
+		"no-tabs": 0,
+		"no-param-reassign": [
+			"error",
+			{
+				"props": false
+			}
+		]
+	},
+	"globals": {
+		"L": true
 	}
 }
