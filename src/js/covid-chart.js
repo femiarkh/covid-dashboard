@@ -23,7 +23,10 @@ function getCovidChartMarkup() {
 export default class CovidChart {
   constructor() {
     this.element = createElement('div', 'covid-chart', getCovidChartMarkup());
-    this.ctx = this.element.querySelector('.covid-chart__canvas').getContext('2d');
+    this.canvas = this.element.querySelector('.covid-chart__canvas');
+    this.ctx = this.canvas.getContext('2d');
+    this.currentChart = null;
+    this.switchersContainer = this.element.querySelector('.switchers');
 
     this.country = null;
     this.valueName = PARAMETERS.valueName.cases;
@@ -107,7 +110,18 @@ export default class CovidChart {
             },
           },
         });
-        return chart;
+        this.currentChart = chart;
       });
+  }
+
+  /**
+   * Update state of the chart every time select is changed.
+   */
+  bindSelectChange() {
+    this.switchersContainer.addEventListener('change', (evt) => {
+      this[evt.target.name] = evt.target.value;
+      this.currentChart.destroy();
+      this.buildChart(this.country);
+    });
   }
 }
