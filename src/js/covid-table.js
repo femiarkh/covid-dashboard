@@ -2,6 +2,7 @@ import createElement from './utils/create-element';
 import Switchers from './switchers';
 import SELECTS from './const/selects';
 import PARAMETERS from './const/parameters';
+import URLS from './const/api-urls';
 import addCommas from './utils/add-commas';
 import countPer100k from './utils/count-per-100k';
 
@@ -55,15 +56,14 @@ export default class CovidTable {
    * @param {string} - Name of a country. If there is none, whole world data will be displayed.
    */
   updateData(country) {
-    const commonURL = 'https://disease.sh/v3/covid-19';
-    let specificURL;
+    let url;
     if (country) {
-      specificURL = `${commonURL}/countries/${country}?strict=true`;
+      url = `${URLS.diseaseSH}/countries/${country}?strict=true`;
     } else {
-      specificURL = `${commonURL}/all`;
+      url = `${URLS.diseaseSH}/all`;
     }
 
-    fetch(specificURL)
+    fetch(url)
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);

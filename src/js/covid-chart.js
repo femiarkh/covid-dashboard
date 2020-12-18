@@ -2,6 +2,7 @@ import createElement from './utils/create-element';
 import Switchers from './switchers';
 import SELECTS from './const/selects';
 import PARAMETERS from './const/parameters';
+import URLS from './const/api-urls';
 import addCommas from './utils/add-commas';
 import countPer100k from './utils/count-per-100k';
 import Chart from '../../node_modules/chart.js/dist/Chart.bundle';
@@ -39,11 +40,11 @@ export default class CovidChart {
     let url;
     let populationURL;
     if (country) {
-      url = `https://disease.sh/v3/covid-19/historical/${country}?lastdays=365`;
-      populationURL = `https://disease.sh/v3/covid-19/countries/${country}?strict=true`;
+      url = `${URLS.diseaseSH}/historical/${country}?lastdays=365`;
+      populationURL = `${URLS.diseaseSH}/countries/${country}?strict=true`;
     } else {
-      url = 'https://disease.sh/v3/covid-19/historical/all?lastdays=365';
-      populationURL = 'https://disease.sh/v3/covid-19/all';
+      url = `${URLS.diseaseSH}/historical/all?lastdays=365`;
+      populationURL = `${URLS.diseaseSH}/all`;
     }
     const urls = [url, populationURL];
     const requests = urls.map((link) => fetch(link));
