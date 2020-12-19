@@ -84,10 +84,20 @@ export default class List {
 		};
 	}
 
+	/**
+* Sets the position of the map on the country.
+* @param {coordinate} - takes coordinates.
+* @returns {} - New map center.
+*/
 	changeLocate(lat, long) {
 		this.map.setView(new L.LatLng(lat, long), 3);
 	}
 
+	/**
+* Get markup for the Map.
+* @param {string} - value from first,second,third select.
+* @returns {DOM element} - DOM element with map .
+*/
 	createMapBody(valueName = this.returnSwitchersEl(3),
 		period = this.returnSwitchersEl(4), valueType = this.returnSwitchersEl(5)) {
 		let valueNameNow = this.returnSettingKeys[valueName];
@@ -164,6 +174,10 @@ export default class List {
 			});
 	}
 
+	/**
+* Get markup for the Map legend.
+* @returns {DOM element} - DOM element with map legend.
+*/
 	createMapLegend() {
 		document.querySelector('.map').append(createElement('div', 'map__legend', ''));
 
@@ -182,6 +196,10 @@ export default class List {
 		}
 	}
 
+	/**
+* Get markup for the body map.
+* @returns {DOM element} - DOM element with map elements.
+*/
 	createMap() {
 		document.querySelector('#root').append(createElement('div', 'map', ''));
 		const mapBody = document.querySelector('.map');
@@ -202,6 +220,10 @@ export default class List {
 		this.setCountryPlace();
 	}
 
+	/**
+* Determines the selected country from the list.
+* @returns {} - New map center.
+*/
 	setCountryPlace() {
 		document.querySelector('.list__listCountry').addEventListener('click', (evt) => {
 			if (evt.path[0].className === 'listCountry__countryEl' || evt.path[1].className === 'listCountry__countryEl') {
