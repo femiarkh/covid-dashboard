@@ -3,6 +3,7 @@ import CovidTable from './js/covid-table';
 import CovidChart from './js/covid-chart';
 import createElement from './js/utils/create-element';
 import URLS from './js/const/api-urls';
+import List from './js/list';
 
 /**
  * Class representing Covid Dashboard app.
