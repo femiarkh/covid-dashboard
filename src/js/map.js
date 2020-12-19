@@ -223,7 +223,7 @@ export default class List {
   /**
  * Handler for updating all the data in the app.* Handler for updating all the data in the app.
  */
-  updateDataHandler() {
+  updateData() {
     this.geoLayerGroup.clearLayers();
     this.circleLayerGroup.clearLayers();
     this.createMapBody();
