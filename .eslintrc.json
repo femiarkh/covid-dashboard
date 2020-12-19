@@ -1,3 +1,13 @@
 {
-  "extends": "airbnb-base"
+  "extends": [
+    "airbnb-base",
+    "eslint:recommended"
+  ],
+  "env": {
+    "node": true,
+    "browser": true
+  },
+  "rules": {
+    "linebreak-style": 0
+  }
 }

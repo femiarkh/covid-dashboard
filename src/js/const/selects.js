@@ -4,7 +4,7 @@ const SELECTS = {
   valueType: ['Absolute', 'Per 100k'],
   tableSelects: ['period', 'valueType'],
   mapSelects: ['valueName', 'period', 'valueType'],
-  listSelects: ['period', 'valueType'],
+  listSelects: ['valueName', 'period', 'valueType'],
   chartSelects: ['valueName', 'period', 'valueType'],
 };
 
