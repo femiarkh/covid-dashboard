@@ -42,6 +42,7 @@ export default class List {
     this.popupOptions = {
       closeButton: false,
     };
+    this.switchersContainer = [];
     this.map = [];
     this.circleLayerGroup = [];
     this.geoLayerGroup = [];
@@ -50,6 +51,7 @@ export default class List {
       mode: 'cors',
       cache: 'default',
     };
+    this.oneHundredThousand = 100000;
     this.zoomCircle = 11;
     this.saveEl = ['AFG', 'ALB', 'DZA', 'AGO', 'ARG', 'ARM', 'AUS', 'AUT', 'AZE', 'BHS', 'BGD', 'BLR',
       'BEL', 'BLZ', 'BEN', 'BMU', 'BTN', 'BOL', 'BIH', 'BWA', 'BRA', 'BRN', 'BGR', 'BFA', 'BDI', 'KHM',
@@ -67,7 +69,6 @@ export default class List {
 
     /**
 * Creates switchers to the body of the list.
-* @returns {DOM element} - add switchers.
 */
     this.createQueryCountry = () => {
       document.querySelector('.map__sortingСriteria')
@@ -87,7 +88,6 @@ export default class List {
   /**
 * Sets the position of the map on the country.
 * @param {coordinate} - takes coordinates.
-* @returns {} - New map center.
 */
   changeLocate(lat, long) {
     this.map.setView(new L.LatLng(lat, long), 3);
@@ -96,7 +96,6 @@ export default class List {
   /**
 * Get markup for the Map.
 * @param {string} - value from first,second,third select.
-* @returns {DOM element} - DOM element with map .
 */
   createMapBody(valueName = this.returnSwitchersEl(0),
     period = this.returnSwitchersEl(1), valueType = this.returnSwitchersEl(2)) {
@@ -138,7 +137,8 @@ export default class List {
             .then((res) => res.json())
             .then((data) => {
               const countPerson = valueTypeNow
-                ? Math.floor((element[valueNameNow] / (element.population / 100000)))
+                ? Math.floor((element[valueNameNow]
+                  / (element.population / this.oneHundredThousand)))
                 : element[valueNameNow];
 
               const geo = L.geoJSON(data, this.geoOptions).bindPopup(new L.Popup(this.popupOptions)
@@ -150,7 +150,7 @@ export default class List {
             })
             .then(() => {
               const countPerson = valueTypeNow ? Math.floor((element[valueNameNow]
-                / (element.population / 100000)))
+                / (element.population / this.oneHundredThousand)))
                 : element[valueNameNow];
 
               const circle = L.circle([element.countryInfo.lat, element.countryInfo.long],
@@ -176,7 +176,6 @@ export default class List {
 
   /**
 * Get markup for the Map legend.
-* @returns {DOM element} - DOM element with map legend.
 */
   createMapLegend() {
     document.querySelector('.map').append(createElement('div', 'map__legend', ''));
@@ -198,7 +197,6 @@ export default class List {
 
   /**
 * Get markup for the body map.
-* @returns {DOM element} - DOM element with map elements.
 */
   createMap() {
     document.querySelector('#root').append(createElement('div', 'map', ''));
@@ -218,11 +216,21 @@ export default class List {
     this.bindSelectChange();
 
     this.setCountryPlace();
+
+    this.switchersContainer = mapBody.querySelector('.switchers');
+  }
+
+  /**
+ * Handler for updating all the data in the app.* Handler for updating all the data in the app.
+ */
+  updateDataHandler() {
+    this.geoLayerGroup.clearLayers();
+    this.circleLayerGroup.clearLayers();
+    this.createMapBody();
   }
 
   /**
 * Determines the selected country from the list.
-* @returns {} - New map center.
 */
   setCountryPlace() {
     document.querySelector('.list__listCountry').addEventListener('click', (evt) => {
