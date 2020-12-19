@@ -52,6 +52,7 @@
     "webpack-merge": "5.4.1"
   },
   "dependencies": {
-    "@babel/runtime": "^7.12.5"
+    "@babel/runtime": "^7.12.5",
+    "editorconfig": "^0.15.3"
   }
 }

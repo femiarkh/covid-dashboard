@@ -6,10 +6,10 @@
  * @returns {HTMLElement} - Created HTML element.
  */
 export default function createElement(tag, className, template) {
-	const element = document.createElement(tag);
-	element.innerHTML = template;
-	if (className) {
-		element.className = className;
-	}
-	return element;
+  const element = document.createElement(tag);
+  element.innerHTML = template;
+  if (className) {
+    element.className = className;
+  }
+  return element;
 }
