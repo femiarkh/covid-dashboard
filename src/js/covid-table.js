@@ -2,6 +2,7 @@ import createElement from './utils/create-element';
 import Switchers from './switchers';
 import SELECTS from './const/selects';
 import PARAMETERS from './const/parameters';
+import DATASET_INDEXES from './const/dataset-indexes';
 import addCommas from './utils/add-commas';
 import countPer100k from './utils/count-per-100k';
 
@@ -53,35 +54,27 @@ export default class CovidTable {
   /**
    * Update data in the table according to current select options.
    * @param {string} - Name of a country. If there is none, whole world data will be displayed.
+   * @param {object} - Promise with datasets.
    */
-  updateData(country) {
-    const commonURL = 'https://disease.sh/v3/covid-19';
-    let specificURL;
-    if (country) {
-      specificURL = `${commonURL}/countries/${country}?strict=true`;
-    } else {
-      specificURL = `${commonURL}/all`;
-    }
-
-    fetch(specificURL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        return response.json();
-      })
-      .then((data) => {
+  updateData(country, dataPromise) {
+    dataPromise
+      .then((dataSets) => {
         if (this.period === PARAMETERS.period.allTime) {
+          const data = dataSets[DATASET_INDEXES.today];
           if (this.valueType === PARAMETERS.valueType.absolute) {
             this.casesContainer.textContent = addCommas(data.cases);
             this.deathsContainer.textContent = addCommas(data.deaths);
             this.recoveredContainer.textContent = addCommas(data.recovered);
           } else {
-            this.casesContainer.textContent = addCommas(data.casesPerOneMillion);
-            this.deathsContainer.textContent = addCommas(data.deathsPerOneMillion);
-            this.recoveredContainer.textContent = addCommas(data.recoveredPerOneMillion);
+            const casesPer100k = countPer100k(data.cases, data.population);
+            const deathsPer100k = countPer100k(data.deaths, data.population);
+            const recoveredPer100k = countPer100k(data.recovered, data.population);
+            this.casesContainer.textContent = addCommas(casesPer100k);
+            this.deathsContainer.textContent = addCommas(deathsPer100k);
+            this.recoveredContainer.textContent = addCommas(recoveredPer100k);
           }
         } else if (this.period === PARAMETERS.period.lastDay) {
+          const data = dataSets[DATASET_INDEXES.yesterday];
           if (this.valueType === PARAMETERS.valueType.absolute) {
             this.casesContainer.textContent = addCommas(data.todayCases);
             this.deathsContainer.textContent = addCommas(data.todayDeaths);
@@ -106,10 +99,10 @@ export default class CovidTable {
   /**
    * Update state of the table every time select is changed.
    */
-  bindSelectChange() {
+  bindSelectChange(handler) {
     this.switchersContainer.addEventListener('change', (evt) => {
       this[evt.target.name] = evt.target.value;
-      this.updateData(this.country);
+      handler(evt.target.name, evt.target.value);
     });
   }
 }
