@@ -2,7 +2,7 @@ import createElement from './utils/create-element';
 import Switchers from './switchers';
 import SELECTS from './const/selects';
 import PARAMETERS from './const/parameters';
-import URLS from './const/api-urls';
+import DATASET_INDEXES from './const/dataset-indexes';
 import addCommas from './utils/add-commas';
 import countPer100k from './utils/count-per-100k';
 import Chart from '../../node_modules/chart.js/dist/Chart.bundle';
@@ -37,32 +37,21 @@ export default class CovidChart {
   /**
    * Draw new Covid Chart.
    * @param {string} country - A country name. If there is none, a global chart will be drawn.
+   * @param {object} dataPromise - Promise with datasets.
    * @returns {object} The chart.
    */
-  buildChart(country) {
-    let url;
-    let populationURL;
-    if (country) {
-      url = `${URLS.diseaseSH}/historical/${country}?lastdays=365`;
-      populationURL = `${URLS.diseaseSH}/countries/${country}?strict=true`;
-    } else {
-      url = `${URLS.diseaseSH}/historical/all?lastdays=365`;
-      populationURL = `${URLS.diseaseSH}/all`;
-    }
-    const urls = [url, populationURL];
-    const requests = urls.map((link) => fetch(link));
-    Promise.all(requests)
-      .then((responses) => Promise.all(responses.map((response) => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        return response.json();
-      })))
+  buildChart(country, dataPromise) {
+    dataPromise
       .then((datasets) => {
-        const mainData = country ? datasets[0].timeline : datasets[0];
-        const { population } = datasets[1];
-        const dataLabels = Object.keys(mainData[this.valueName]).map((key) => new Date(key));
-        let dataValues = Object.values(mainData[this.valueName]);
+        let historicalData;
+        if (country) {
+          historicalData = datasets[DATASET_INDEXES.historical].timeline;
+        } else {
+          historicalData = datasets[DATASET_INDEXES.historical];
+        }
+        const { population } = datasets[DATASET_INDEXES.today];
+        const dataLabels = Object.keys(historicalData[this.valueName]).map((key) => new Date(key));
+        let dataValues = Object.values(historicalData[this.valueName]);
         if (this.period === PARAMETERS.period.lastDay) {
           dataValues = dataValues.map((value, index, arr) => value - arr[index - 1] || 0);
         }
@@ -116,12 +105,22 @@ export default class CovidChart {
 
   /**
    * Update state of the chart every time select is changed.
+   * @param {function} - Handler passed by the app.
    */
-  bindSelectChange() {
+  bindSelectChange(handler) {
     this.switchersContainer.addEventListener('change', (evt) => {
       this[evt.target.name] = evt.target.value;
-      this.currentChart.destroy();
-      this.buildChart(this.country);
+      handler();
     });
+  }
+
+  /**
+   * Destroy previous chart and build a new one.
+   * @param {string} country - A country name. If there is none, a global chart will be drawn.
+   * @param {object} dataPromise - Promise with datasets.
+   */
+  updateData(country, dataPromise) {
+    this.currentChart.destroy();
+    this.buildChart(country, dataPromise);
   }
 }
