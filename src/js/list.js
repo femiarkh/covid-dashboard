@@ -23,7 +23,6 @@ export default class List {
     this.switchersContainer = [];
     /**
    * Creates switchers to the body of the list.
-   * @returns {DOM element} - add switchers.
    */
     this.createQueryCountry = () => {
       document.querySelector('.list__sortingСriteria')
@@ -41,7 +40,6 @@ export default class List {
 
     /**
    * Remove all list items.
-   * @returns {} - clear list items.
    */
     this.clearListCountry = () => {
       if (document.querySelectorAll('.listCountry__countryEl')) {
@@ -53,7 +51,6 @@ export default class List {
 
     /**
    * Change the appearance of the list.
-   * @returns {css style} - changes css style.
    */
     this.setFocus = () => {
       document.querySelector('.list__inputCountry').value = '';
@@ -111,7 +108,7 @@ export default class List {
           const countryEl = document.createElement('div');
 
           const countPerson = valueTypeNow ? Math.floor((element[valueNameNow]
-            / (element.population / 100000))) : element[valueNameNow];
+            / (element.population / this.oneHundredThousand))) : element[valueNameNow];
           countryEl.className = 'listCountry__countryEl';
           countryEl.innerHTML = `<img src='${element.countryInfo.flag}' alt='${element.country}' class ='countryEl__Img'>
     <span class ='countryEl__name'>${element.country}</span>
@@ -131,7 +128,6 @@ export default class List {
 
   /**
   * Change the appearance of the list.
-  * @returns {css style} - changes css style.
   */
   clearFocus() {
     document.querySelector('.list__inputCountry').value = '[enter country]';
@@ -160,7 +156,6 @@ export default class List {
   /**
   * Sorts the list of countries.
   * @param {letter} - the characters by which the list is sorted.
-  * @returns {DOM element} - new list of countries.
   */
   changeSearch(e) {
     document.querySelector('.list__listCountry').classList.toggle('opacity');
@@ -174,8 +169,6 @@ export default class List {
         this.createListCountry(document.querySelector('.list__inputCountry').value);
       }
       document.querySelector('.list__listCountry').classList.toggle('opacity');
-      setTimeout(() => {
-      }, 100);
     }, 750);
   }
 
@@ -212,7 +205,6 @@ export default class List {
 
   /**
   * Get markup for the body list.
-  * @returns {DOM element} - DOM element with list elements.
   */
   createList() {
     document.querySelector('#root').append(createElement('div', 'list', ''));
