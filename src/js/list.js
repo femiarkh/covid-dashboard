@@ -3,10 +3,10 @@ import SELECTS from './const/selects';
 import Switchers from './switchers';
 
 /**
- * Get markup for the Covid List.
- * @param {function} - takes Data Base.
- * @returns {DOM element} - DOM element with Covid-list.
- */
+	* Get markup for the Covid List.
+	* @param {function} - takes Data Base.
+	* @returns {DOM element} - DOM element with Covid-list.
+	*/
 export default class List {
 	constructor(dataBase) {
 		this.dataBase = dataBase;
@@ -19,30 +19,30 @@ export default class List {
 			Absolute: false,
 			'Per 100k': true,
 		};
-
+		this.URLS = 'https://disease.sh/v3/covid-19/';
 		/**
- * Creates switchers to the body of the list.
- * @returns {DOM element} - add switchers.
- */
+	* Creates switchers to the body of the list.
+	* @returns {DOM element} - add switchers.
+	*/
 		this.createQueryCountry = () => {
 			document.querySelector('.list__sortingСriteria')
 				.append(new Switchers(SELECTS.listSelects).element);
 		};
 
 		/**
- * Returns the value input.
- * @param {number} - takes the seat number in switchers.
- * @returns {string} - the value select.
- */
+	* Returns the value input.
+	* @param {number} - takes the seat number in switchers.
+	* @returns {string} - the value select.
+	*/
 		this.returnSwitchersEl = (num) => {
 			const switchersEl = document.querySelectorAll('.switchers__switcher');
 			return switchersEl[num].options[switchersEl[num].options.selectedIndex].text;
 		};
 
 		/**
- * Remove all list items.
- * @returns {} - clear list items.
- */
+	* Remove all list items.
+	* @returns {} - clear list items.
+	*/
 		this.clearListCountry = () => {
 			if (document.querySelectorAll('.listCountry__countryEl')) {
 				document.querySelectorAll('.listCountry__countryEl').forEach((element) => {
@@ -52,27 +52,31 @@ export default class List {
 		};
 
 		/**
- * Change the appearance of the list.
- * @returns {css style} - changes css style.
- */
+	* Change the appearance of the list.
+	* @returns {css style} - changes css style.
+	*/
 		this.setFocus = () => {
 			document.querySelector('.list__inputCountry').value = '';
-			Object.assign(document.querySelector('.list').style, { width: '100%', position: 'absolute' });
+			Object.assign(document.querySelector('.list').style, { width: '100%' });
+			Object.assign(document.querySelector('.map').style, { width: '0rem' });
+			Object.assign(document.querySelector('.map__sortingСriteria').style, { display: 'none' });
+			Object.assign(document.querySelector('.map__legend').style, { opacity: '0' });
+			Object.assign(document.querySelector('#mapid').style, { width: '0rem' });
 			Object.assign(document.querySelector('.switchers').style, { top: '-6rem' });
 			Object.assign(document.querySelector('.list__listCountry').style, { top: '-6rem' });
 		};
 	}
 
 	/**
-	 * Get markup for the List.
-	 * @param {string} - the string by which sorting occurs.
-	 * @param {string} - value from first select.
-	 * @param {string} - value from second select.
-	 * @param {string}  - value from third select.
-	 * @returns {DOM element} - DOM element with list elements.
-	 */
-	createListCountry(sorter, valueName = this.returnSwitchersEl(0),
-		period = this.returnSwitchersEl(1), valueType = this.returnSwitchersEl(2)) {
+* Get markup for the List.
+* @param {string} - the string by which sorting occurs.
+* @param {string} - value from first,second,third select.
+* @returns {DOM element} - DOM element with list elements.
+*/
+	createListCountry(sorter,
+		valueName = this.returnSwitchersEl(0),
+		period = this.returnSwitchersEl(1),
+		valueType = this.returnSwitchersEl(2)) {
 		let valueNameNow = this.returnSettingKeys[valueName];
 		const periodNow = this.returnSettingKeys[period];
 		const valueTypeNow = this.returnSettingKeys[valueType];
@@ -85,8 +89,8 @@ export default class List {
 			result
 				.sort((a, b) => {
 					if (valueTypeNow) {
-						return Math.floor((b[valueNameNow] / b.population) * 100000)
-							- Math.floor((a[valueNameNow] / a.population) * 100000);
+						return Math.floor((b[valueNameNow] / (b.population / 100000)))
+							- Math.floor((a[valueNameNow] / (a.population / 100000)));
 					}
 					return b[valueNameNow] - a[valueNameNow];
 				})
@@ -98,16 +102,16 @@ export default class List {
 				})
 				.filter((el) => {
 					if (valueTypeNow) {
-						return Number.isInteger(Math.floor((el[valueNameNow] / el.population)
-							* 100000)) === true;
+						return Number.isInteger(Math.floor((el[valueNameNow]
+							/ (el.population / 100000)))) === true;
 					}
 					return Number.isInteger(el[valueNameNow]) === true;
 				})
 				.forEach((element) => {
 					const countryEl = document.createElement('div');
 
-					const countPerson = valueTypeNow ? Math.floor((element[valueNameNow] / element.population)
-						* 100000) : element[valueNameNow];
+					const countPerson = valueTypeNow ? Math.floor((element[valueNameNow]
+						/ (element.population / 100000))) : element[valueNameNow];
 					countryEl.className = 'listCountry__countryEl';
 					countryEl.innerHTML = `<img src="${element.countryInfo.flag}" alt="${element.country}" class ='countryEl__Img'>
 				<span class ='countryEl__name'>${element.country}</span>
@@ -128,12 +132,21 @@ export default class List {
 			document.querySelector('.searchBody').remove();
 		}
 
-		this.clearListCountry();
-		this.createListCountry();
-
-		Object.assign(document.querySelector('.list').style, { width: '40rem', position: 'relative' });
+		Object.assign(document.querySelector('.list').style, { width: '40rem' });
+		Object.assign(document.querySelector('.map').style, { width: '70rem' });
+		Object.assign(document.querySelector('#mapid').style, { width: '70rem' });
 		Object.assign(document.querySelector('.list__listCountry').style, { 'background-image': 'none', top: '-0rem' });
 		Object.assign(document.querySelector('.switchers').style, { top: '-0rem' });
+		setTimeout(() => {
+			this.clearListCountry();
+			Object.assign(document.querySelector('.list__listCountry').style, { opacity: '0' });
+			Object.assign(document.querySelector('.map__sortingСriteria').style, { display: 'block' });
+		}, 100);
+		setTimeout(() => {
+			this.createListCountry();
+			Object.assign(document.querySelector('.map__legend').style, { opacity: '1' });
+			Object.assign(document.querySelector('.list__listCountry').style, { opacity: '1' });
+		}, 400);
 	}
 
 	/**
@@ -225,10 +238,12 @@ export default class List {
 	}
 
 	bindSelectChange() {
-		document.querySelector('.switchers').addEventListener('change', (evt) => {
-			this[evt.target.name] = evt.target.value;
-			this.clearListCountry();
-			this.createListCountry();
+		document.querySelectorAll('.switchers').forEach((el) => {
+			el.addEventListener('change', (evt) => {
+				this[evt.target.name] = evt.target.value;
+				this.clearListCountry();
+				this.createListCountry();
+			});
 		});
 	}
 }
