@@ -15,6 +15,7 @@ class App {
   constructor(table, chart) {
     this.table = table;
     this.chart = chart;
+    this.observers = [this.table, this.chart];
     this.country = null;
     this.name = 'Covid-19 Dashboard';
     this.header = createElement('h1', 'app-name', this.name);
@@ -56,11 +57,24 @@ class App {
 
   /**
    * Handler for updating all the data in the app.
+   * @param {string} select - Name of the switched select.
+   * @param {string} option - Name of a new option of the select.
    */
-  updateDataHandler() {
+  updateDataHandler(select, option) {
     this.saveDataPromise();
-    this.table.updateData(this.country, this.dataPromise);
-    this.chart.updateData(this.country, this.dataPromise);
+    this.observers.forEach((observer) => {
+      if (!observer) {
+        return;
+      }
+      const currentObserver = observer;
+      const switcher = currentObserver.switchersContainer.querySelector(`select[name=${select}]`);
+      if (switcher) {
+        // Update a state of a switcher according to the changes.
+        switcher.value = option;
+        currentObserver[select] = option;
+      }
+      currentObserver.updateData(this.country, this.dataPromise);
+    });
   }
 }
 

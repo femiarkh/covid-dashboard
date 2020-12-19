@@ -116,7 +116,7 @@ export default class CovidChart {
   bindSelectChange(handler) {
     this.switchersContainer.addEventListener('change', (evt) => {
       this[evt.target.name] = evt.target.value;
-      handler();
+      handler(evt.target.name, evt.target.value);
     });
   }
 
