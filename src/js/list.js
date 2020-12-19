@@ -19,7 +19,8 @@ export default class List {
       Absolute: false,
       'Per 100k': true,
     };
-    this.URLS = 'https://disease.sh/v3/covid-19/';
+    this.oneHundredThousand = 100000;
+    this.switchersContainer = [];
     /**
    * Creates switchers to the body of the list.
    * @returns {DOM element} - add switchers.
@@ -28,7 +29,6 @@ export default class List {
       document.querySelector('.list__sortingСriteria')
         .append(new Switchers(SELECTS.listSelects).element);
     };
-
     /**
    * Returns the value input.
    * @param {number} - takes the seat number in switchers.
@@ -89,8 +89,8 @@ export default class List {
       result
         .sort((a, b) => {
           if (valueTypeNow) {
-            return Math.floor((b[valueNameNow] / (b.population / 100000)))
-              - Math.floor((a[valueNameNow] / (a.population / 100000)));
+            return Math.floor((b[valueNameNow] / (b.population / this.oneHundredThousand)))
+              - Math.floor((a[valueNameNow] / (a.population / this.oneHundredThousand)));
           }
           return b[valueNameNow] - a[valueNameNow];
         })
@@ -103,7 +103,7 @@ export default class List {
         .filter((el) => {
           if (valueTypeNow) {
             return Number.isInteger(Math.floor((el[valueNameNow]
-              / (el.population / 100000)))) === true;
+              / (el.population / this.oneHundredThousand)))) === true;
           }
           return Number.isInteger(el[valueNameNow]) === true;
         })
@@ -122,9 +122,17 @@ export default class List {
   }
 
   /**
- * Change the appearance of the list.
- * @returns {css style} - changes css style.
+ * Handler for updating all the data in the app.* Handler for updating all the data in the app.
  */
+  updateDataHandler() {
+    this.clearListCountry();
+    this.createListCountry();
+  }
+
+  /**
+  * Change the appearance of the list.
+  * @returns {css style} - changes css style.
+  */
   clearFocus() {
     document.querySelector('.list__inputCountry').value = '[enter country]';
 
@@ -150,10 +158,10 @@ export default class List {
   }
 
   /**
- * Sorts the list of countries.
- * @param {letter} - the characters by which the list is sorted.
- * @returns {DOM element} - new list of countries.
- */
+  * Sorts the list of countries.
+  * @param {letter} - the characters by which the list is sorted.
+  * @returns {DOM element} - new list of countries.
+  */
   changeSearch(e) {
     document.querySelector('.list__listCountry').classList.toggle('opacity');
     setTimeout(() => {
@@ -172,9 +180,9 @@ export default class List {
   }
 
   /**
- * EventListener on click to input.
- * @returns {EventListener} - add eventListener to input.
- */
+  * EventListener on click to input.
+  * @returns {EventListener} - add eventListener to input.
+  */
   clickInputCountry() {
     document.querySelector('.list__inputCountry').addEventListener('click', () => {
       this.setFocus();
@@ -182,9 +190,9 @@ export default class List {
   }
 
   /**
- * EventListener on blur to input.
- * @returns {EventListener} - add eventListener to inputs.
- */
+  * EventListener on blur to input.
+  * @returns {EventListener} - add eventListener to inputs.
+  */
   blurInputCountry() {
     document.querySelector('.list__inputCountry').addEventListener('blur', () => {
       this.clearFocus();
@@ -192,9 +200,9 @@ export default class List {
   }
 
   /**
- * EventListener on keyup to input.
- * @returns {EventListener} - adds a restriction on entered characters.
- */
+  * EventListener on keyup to input.
+  * @returns {EventListener} - adds a restriction on entered characters.
+  */
   keyPressInputCountry() {
     document.querySelector('.list__inputCountry').addEventListener('keyup', (e) => {
       e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '');
@@ -203,9 +211,9 @@ export default class List {
   }
 
   /**
- * Get markup for the body list.
- * @returns {DOM element} - DOM element with list elements.
- */
+  * Get markup for the body list.
+  * @returns {DOM element} - DOM element with list elements.
+  */
   createList() {
     document.querySelector('#root').append(createElement('div', 'list', ''));
 
@@ -227,6 +235,8 @@ export default class List {
     this.createListCountry();
 
     this.bindSelectChange();
+
+    this.switchersContainer = listBody.querySelector('.switchers');
   }
 
   bindSelectChange() {
