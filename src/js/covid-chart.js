@@ -53,7 +53,13 @@ export default class CovidChart {
         const dataLabels = Object.keys(historicalData[this.valueName]).map((key) => new Date(key));
         let dataValues = Object.values(historicalData[this.valueName]);
         if (this.period === PARAMETERS.period.lastDay) {
-          dataValues = dataValues.map((value, index, arr) => value - arr[index - 1] || 0);
+          dataValues = dataValues.map((value, index, arr) => {
+            let result = value - arr[index - 1] || 0;
+            if (result < 0) {
+              result = 0;
+            }
+            return result;
+          });
         }
         if (this.valueType === PARAMETERS.valueType.per100k) {
           dataValues = dataValues.map((value) => countPer100k(value, population));
