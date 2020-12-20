@@ -1,7 +1,9 @@
 import createElement from './utils/create-element';
 import SELECTS from './const/selects';
 import DATASET_INDEXES from './const/dataset-indexes';
+import PARAMETERS from './const/parameters';
 import Switchers from './switchers';
+import addCommas from './utils/add-commas';
 
 /**
  * Get markup for the Covid List.
@@ -61,7 +63,7 @@ export default class List {
       // document.querySelector('#mapid').classList.toggle('mapidNS');
       // document.querySelector('.map__sortingСriteria').classList.toggle('mapSC');
       // document.querySelector('.map__legend').classList.toggle('opacity');
-      // document.querySelector('.switchers').classList.toggle('switchUp');
+      this.listBody.querySelector('.switchers').classList.toggle('switchUp');
       this.listBody.querySelector('.list__listCountry').classList.toggle('switchUp');
     };
   }
@@ -86,7 +88,13 @@ export default class List {
     }
 
     this.dataPromise.then((result) => {
-      const data = result[DATASET_INDEXES.allCountries];
+      let data;
+      const currentPeriod = this.listBody.querySelector('.switchers__switcher--period').value;
+      if (currentPeriod === PARAMETERS.period.lastDay) {
+        data = result[DATASET_INDEXES.allCountriesYesterday];
+      } else {
+        data = result[DATASET_INDEXES.allCountries];
+      }
       data
         .sort((a, b) => {
           if (valueTypeNow) {
@@ -116,7 +124,7 @@ export default class List {
           countryEl.className = 'listCountry__countryEl';
           countryEl.innerHTML = `<img src='${element.countryInfo.flag}' alt='${element.country}' class ='countryEl__Img'>
     <span class ='countryEl__name'>${element.country}</span>
-    <span class ='countryEl__count'>${countPerson}</span>`;
+    <span class ='countryEl__count'>${addCommas(countPerson)}</span>`;
           this.listBody.querySelector('.list__listCountry').append(countryEl);
         });
     });
@@ -143,7 +151,7 @@ export default class List {
     this.listBody.classList.toggle('listFS');
     // document.querySelector('.map').classList.toggle('mapNS');
     // document.querySelector('#mapid').classList.toggle('mapidNS');
-    // document.querySelector('.switchers').classList.toggle('switchUp');
+    this.listBody.querySelector('.switchers').classList.toggle('switchUp');
     this.listBody.querySelector('.list__listCountry').classList.toggle('switchUp');
     setTimeout(() => {
       this.clearListCountry();
@@ -237,6 +245,17 @@ export default class List {
         this[evt.target.name] = evt.target.value;
         handler(evt.target.name, evt.target.value);
       });
+    });
+  }
+
+  bindCountryPick(handler) {
+    this.listBody.querySelector('.list__listCountry').addEventListener('click', (evt) => {
+      const countryEl = evt.target.closest('.listCountry__countryEl');
+      if (!countryEl) {
+        return;
+      }
+      const countryName = countryEl.querySelector('.countryEl__name').textContent;
+      handler(countryName);
     });
   }
 }

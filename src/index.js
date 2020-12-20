@@ -29,6 +29,7 @@ class App {
     this.table.bindSelectChange(this.updateDataHandler.bind(this));
     this.chart.bindSelectChange(this.updateDataHandler.bind(this));
     this.list.bindSelectChange(this.updateDataHandler.bind(this));
+    this.list.bindCountryPick(this.changeCountryHandler.bind(this));
   }
 
   /**
@@ -40,6 +41,7 @@ class App {
     let yesterdayURL;
     let historicalURL;
     const allCountriesURL = `${URLS.diseaseSH}/countries`;
+    const allCountriesYesterdayURL = `${URLS.diseaseSH}/countries?yesterday=true`;
     if (country) {
       todayURL = `${URLS.diseaseSH}/countries/${country}?strict=true`;
       yesterdayURL = `${URLS.diseaseSH}/countries/${country}?yesterday=true&strict=true`;
@@ -49,7 +51,7 @@ class App {
       yesterdayURL = `${URLS.diseaseSH}/all?yesterday=true`;
       historicalURL = `${URLS.diseaseSH}/historical/all?lastdays=365`;
     }
-    const urls = [todayURL, yesterdayURL, historicalURL, allCountriesURL];
+    const urls = [todayURL, yesterdayURL, historicalURL, allCountriesURL, allCountriesYesterdayURL];
     const requests = urls.map((link) => fetch(link));
     this.dataPromise = Promise.all(requests)
       .then((responses) => Promise.all(responses.map((response) => {
@@ -66,7 +68,7 @@ class App {
    * @param {string} option - Name of a new option of the select.
    */
   updateDataHandler(select, option) {
-    this.saveDataPromise();
+    this.saveDataPromise(this.country);
     this.observers.forEach((observer) => {
       if (!observer) {
         return;
@@ -78,6 +80,16 @@ class App {
         switcher.value = option;
         currentObserver[select] = option;
       }
+      currentObserver.updateData(this.country, this.dataPromise);
+    });
+  }
+
+  changeCountryHandler(country) {
+    this.country = country;
+    this.saveDataPromise(country);
+    this.observers.forEach((observer) => {
+      const currentObserver = observer;
+      currentObserver.country = country;
       currentObserver.updateData(this.country, this.dataPromise);
     });
   }
