@@ -77,7 +77,7 @@ export default class CovidChart {
           },
           options: {
             responsive: true,
-            aspectRatio: 1.5,
+            aspectRatio: 2,
             scales: {
               xAxes: [{
                 type: 'time',
