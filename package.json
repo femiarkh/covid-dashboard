@@ -12,8 +12,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint",
-      "pre-push": "npm run lint"
+      "pre-commit": "npm run lint && npm run stylelint",
+      "pre-push": "npm run lint && npm run stylelint"
     }
   },
   "repository": {
@@ -52,6 +52,8 @@
     "webpack-merge": "5.4.1"
   },
   "dependencies": {
-    "@babel/runtime": "^7.12.5"
+    "chart.js": "^2.9.4",
+    "@babel/runtime": "^7.12.5",
+    "editorconfig": "^0.15.3"
   }
 }

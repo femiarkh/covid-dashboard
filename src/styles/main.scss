@@ -1,47 +1,87 @@
-html {
-  font-size: 10px;
-  font-family: "Noto Sans JP", sans-serif;
-}
 
-::-webkit-scrollbar {
-  width: 1.5rem !important;
-}
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 1rem rgba(0, 0, 0, 0.3) !important;
-  -webkit-border-radius: 2rem !important;
-  border-radius: 2rem !important;
-}
-
-::-webkit-scrollbar-thumb {
-  -webkit-border-radius: 1rem !important;
-  border-radius: 1rem !important;
-  background: rgba(65, 65, 65, 0.8) !important;
-  -webkit-box-shadow: inset 0 0 2rem rgba(0, 0, 0, 0.5) !important;
-}
-
-::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(255, 0, 0, 0.4) !important;
-}
+$font-color: #1a1a1a;
+$borders-color: #000;
+$headers-background: #d2dccb;
+$main-background: #fcfbf2;
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-#root {
-  display: flex;
-  width: 100%;
+
+html {
+  font-family: 'Roboto', Verdana, Arial, sans-serif;
+  font-size: 10px;
+  color: $font-color;
 }
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1280px;
+  min-height: 100vh;
+  margin: 0 auto;
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.app-name {
+  width: 100%;
+  margin-bottom: 40px;
+  font-size: 4rem;
+  text-align: center;
+}
+
+.covid-table {
+  min-width: 25%;
+  margin-right: 40px;
+  font-size: 2.4rem;
+  border: 1px solid $borders-color;
+  border-collapse: collapse;
+}
+
+.covid-table__location {
+  padding: 10px;
+  border: 1px solid $borders-color;
+  background-color: $headers-background;
+}
+
+.covid-table__switchers {
+  text-align: center;
+}
+
+.covid-table__row td {
+  padding: 24px;
+  background-color: $main-background;
+}
+
+.covid-table__stat-value {
+  text-align: right;
+}
+
+.covid-chart {
+  width: 45%;
+}
+
 .list {
-  height: 75vh;
+  height: 50vh;
   width: 40rem;
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
   transition: 0.75s ease all;
-  -webkit-box-shadow: 0px 12px 27px -4px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 0px 12px 27px -4px rgba(0, 0, 0, 0.75);
-  box-shadow: 0px 12px 27px -4px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
   &__queryCountry {
     z-index: 6;
     margin-bottom: 1rem;
@@ -49,12 +89,13 @@ html {
   &__inputCountry {
     box-sizing: border-box;
     width: 100%;
-    height: 3rem;
-    font-size: 1.7rem;
+    height: 4rem;
+    font-size: 2rem;
   }
+
   &__listCountry {
-    top: 0rem;
-    transition: 0.5s ease all;
+    top: 0;
+    transition: 0.75s ease all;
     background-repeat: no-repeat;
     background-position: center;
     position: relative;
@@ -65,15 +106,17 @@ html {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1rem;
-    box-shadow: 0 0 0px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
     transition: box-shadow 500ms;
     cursor: pointer;
+
     &:hover {
-      -webkit-box-shadow: 0px 12px 27px -4px rgba(0, 0, 0, 0.75);
-      -moz-box-shadow: 0px 12px 27px -4px rgba(0, 0, 0, 0.75);
-      box-shadow: 0px 12px 27px -4px rgba(0, 0, 0, 0.75);
+      -webkit-box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
+      -moz-box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
+      box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
     }
   }
+
   .countryEl__Img {
     width: 10rem;
     height: 5.7rem;
@@ -94,19 +137,22 @@ html {
 .switchers {
   transition: 0.75s ease all;
   z-index: 4;
-  top: 0rem;
+  top: 0;
   display: flex;
   justify-content: space-around;
   position: relative;
+
   &__switcher {
     width: 32%;
-    height: 3rem;
-    font-size: 1.5rem;
+    height: 4rem;
+    font-size: 2rem;
   }
 }
+
 .countryEl {
   margin-bottom: 2rem;
 }
+
 .countryElImg {
   width: 6rem;
   height: 4rem;
