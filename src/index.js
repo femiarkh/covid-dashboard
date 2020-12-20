@@ -1,9 +1,9 @@
 import './styles/main.scss';
 import CovidTable from './js/covid-table';
 import CovidChart from './js/covid-chart';
+import CovidList from './js/covid-list';
 import createElement from './js/utils/create-element';
 import URLS from './js/const/api-urls';
-import List from './js/list';
 
 /**
  * Class representing Covid Dashboard app.
@@ -13,10 +13,11 @@ class App {
    * App should take Covid Table, Covid Map, Covid List and Covid Chart as its parameters.
    * @param {object} table - instance of Covid Table class.
    */
-  constructor(table, chart) {
+  constructor(table, chart, list) {
     this.table = table;
     this.chart = chart;
-    this.observers = [this.table, this.chart];
+    this.list = list;
+    this.observers = [this.table, this.chart, this.list];
     this.country = null;
     this.name = 'Covid-19 Dashboard';
     this.header = createElement('h1', 'app-name', this.name);
@@ -24,8 +25,10 @@ class App {
     this.saveDataPromise();
     this.table.updateData(this.country, this.dataPromise);
     this.chart.buildChart(this.country, this.dataPromise);
+    this.list.createList(this.country, this.dataPromise);
     this.table.bindSelectChange(this.updateDataHandler.bind(this));
     this.chart.bindSelectChange(this.updateDataHandler.bind(this));
+    this.list.bindSelectChange(this.updateDataHandler.bind(this));
   }
 
   /**
@@ -36,6 +39,7 @@ class App {
     let todayURL;
     let yesterdayURL;
     let historicalURL;
+    const allCountriesURL = `${URLS.diseaseSH}/countries`;
     if (country) {
       todayURL = `${URLS.diseaseSH}/countries/${country}?strict=true`;
       yesterdayURL = `${URLS.diseaseSH}/countries/${country}?yesterday=true&strict=true`;
@@ -45,7 +49,7 @@ class App {
       yesterdayURL = `${URLS.diseaseSH}/all?yesterday=true`;
       historicalURL = `${URLS.diseaseSH}/historical/all?lastdays=365`;
     }
-    const urls = [todayURL, yesterdayURL, historicalURL];
+    const urls = [todayURL, yesterdayURL, historicalURL, allCountriesURL];
     const requests = urls.map((link) => fetch(link));
     this.dataPromise = Promise.all(requests)
       .then((responses) => Promise.all(responses.map((response) => {
@@ -79,7 +83,8 @@ class App {
   }
 }
 
-const app = new App(new CovidTable(), new CovidChart());
+const app = new App(new CovidTable(), new CovidChart(), new CovidList());
 app.container.append(app.header);
 app.container.append(app.table.element);
 app.container.append(app.chart.element);
+app.container.append(app.list.listBody);

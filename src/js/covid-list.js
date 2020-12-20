@@ -1,5 +1,6 @@
 import createElement from './utils/create-element';
 import SELECTS from './const/selects';
+import DATASET_INDEXES from './const/dataset-indexes';
 import Switchers from './switchers';
 
 /**
@@ -21,11 +22,12 @@ export default class List {
     };
     this.oneHundredThousand = 100000;
     this.switchersContainer = [];
+    this.sorter = null;
     /**
    * Creates switchers to the body of the list.
    */
     this.createQueryCountry = () => {
-      document.querySelector('.list__sortingСriteria')
+      this.listBody.querySelector('.list__sortingСriteria')
         .append(new Switchers(SELECTS.listSelects).element);
     };
     /**
@@ -34,7 +36,7 @@ export default class List {
    * @returns {string} - the value select.
    */
     this.returnSwitchersEl = (num) => {
-      const switchersEl = document.querySelectorAll('.switchers__switcher');
+      const switchersEl = this.listBody.querySelectorAll('.switchers__switcher');
       return switchersEl[num].options[switchersEl[num].options.selectedIndex].text;
     };
 
@@ -42,8 +44,8 @@ export default class List {
    * Remove all list items.
    */
     this.clearListCountry = () => {
-      if (document.querySelectorAll('.listCountry__countryEl')) {
-        document.querySelectorAll('.listCountry__countryEl').forEach((element) => {
+      if (this.listBody.querySelectorAll('.listCountry__countryEl')) {
+        this.listBody.querySelectorAll('.listCountry__countryEl').forEach((element) => {
           element.remove();
         });
       }
@@ -53,14 +55,14 @@ export default class List {
    * Change the appearance of the list.
    */
     this.setFocus = () => {
-      document.querySelector('.list__inputCountry').value = '';
-      document.querySelector('.list').classList.toggle('listFS');
-      document.querySelector('.map').classList.toggle('mapNS');
-      document.querySelector('#mapid').classList.toggle('mapidNS');
-      document.querySelector('.map__sortingСriteria').classList.toggle('mapSC');
-      document.querySelector('.map__legend').classList.toggle('opacity');
-      document.querySelector('.switchers').classList.toggle('switchUp');
-      document.querySelector('.list__listCountry').classList.toggle('switchUp');
+      this.listBody.querySelector('.list__inputCountry').value = '';
+      this.listBody.classList.toggle('listFS');
+      // document.querySelector('.map').classList.toggle('mapNS');
+      // document.querySelector('#mapid').classList.toggle('mapidNS');
+      // document.querySelector('.map__sortingСriteria').classList.toggle('mapSC');
+      // document.querySelector('.map__legend').classList.toggle('opacity');
+      // document.querySelector('.switchers').classList.toggle('switchUp');
+      this.listBody.querySelector('.list__listCountry').classList.toggle('switchUp');
     };
   }
 
@@ -70,10 +72,11 @@ export default class List {
  * @param {string} - value from first,second,third select.
  * @returns {DOM element} - DOM element with list elements.
  */
-  createListCountry(sorter,
-    valueName = this.returnSwitchersEl(0),
-    period = this.returnSwitchersEl(1),
-    valueType = this.returnSwitchersEl(2)) {
+  createListCountry(country, dataPromise) {
+    this.dataPromise = dataPromise;
+    const valueName = this.returnSwitchersEl(0);
+    const period = this.returnSwitchersEl(1);
+    const valueType = this.returnSwitchersEl(2);
     let valueNameNow = this.returnSettingKeys[valueName];
     const periodNow = this.returnSettingKeys[period];
     const valueTypeNow = this.returnSettingKeys[valueType];
@@ -82,8 +85,9 @@ export default class List {
       valueNameNow = periodNow + valueName[0].toUpperCase() + valueName.slice(1);
     }
 
-    this.dataBase.then((result) => {
-      result
+    this.dataPromise.then((result) => {
+      const data = result[DATASET_INDEXES.allCountries];
+      data
         .sort((a, b) => {
           if (valueTypeNow) {
             return Math.floor((b[valueNameNow] / (b.population / this.oneHundredThousand)))
@@ -92,8 +96,8 @@ export default class List {
           return b[valueNameNow] - a[valueNameNow];
         })
         .filter((el) => {
-          if (sorter) {
-            return el.country.toLowerCase().includes(sorter.toLowerCase());
+          if (this.sorter) {
+            return el.country.toLowerCase().includes(this.sorter.toLowerCase());
           }
           return el.country.toLowerCase().includes(el.country.toLowerCase());
         })
@@ -113,7 +117,7 @@ export default class List {
           countryEl.innerHTML = `<img src='${element.countryInfo.flag}' alt='${element.country}' class ='countryEl__Img'>
     <span class ='countryEl__name'>${element.country}</span>
     <span class ='countryEl__count'>${countPerson}</span>`;
-          document.querySelector('.list__listCountry').append(countryEl);
+          this.listBody.querySelector('.list__listCountry').append(countryEl);
         });
     });
   }
@@ -121,35 +125,35 @@ export default class List {
   /**
  * Handler for updating all the data in the app.* Handler for updating all the data in the app.
  */
-  updateData() {
+  updateData(country, dataPromise) {
     this.clearListCountry();
-    this.createListCountry();
+    this.createListCountry(country, dataPromise);
   }
 
   /**
   * Change the appearance of the list.
   */
   clearFocus() {
-    document.querySelector('.list__inputCountry').value = '[enter country]';
+    this.listBody.querySelector('.list__inputCountry').value = '[enter country]';
 
-    if (document.querySelector('.searchBody')) {
-      document.querySelector('.searchBody').remove();
+    if (this.listBody.querySelector('.searchBody')) {
+      this.listBody.querySelector('.searchBody').remove();
     }
 
-    document.querySelector('.list').classList.toggle('listFS');
-    document.querySelector('.map').classList.toggle('mapNS');
-    document.querySelector('#mapid').classList.toggle('mapidNS');
-    document.querySelector('.switchers').classList.toggle('switchUp');
-    document.querySelector('.list__listCountry').classList.toggle('switchUp');
+    this.listBody.classList.toggle('listFS');
+    // document.querySelector('.map').classList.toggle('mapNS');
+    // document.querySelector('#mapid').classList.toggle('mapidNS');
+    // document.querySelector('.switchers').classList.toggle('switchUp');
+    this.listBody.querySelector('.list__listCountry').classList.toggle('switchUp');
     setTimeout(() => {
       this.clearListCountry();
-      document.querySelector('.list__listCountry').classList.toggle('opacity');
-      document.querySelector('.map__sortingСriteria').classList.toggle('mapSC');
+      this.listBody.querySelector('.list__listCountry').classList.toggle('opacity');
+      // document.querySelector('.map__sortingСriteria').classList.toggle('mapSC');
     }, 100);
     setTimeout(() => {
-      this.createListCountry();
-      document.querySelector('.map__legend').classList.toggle('opacity');
-      document.querySelector('.list__listCountry').classList.toggle('opacity');
+      this.createListCountry(this.country, this.dataPromise);
+      // document.querySelector('.map__legend').classList.toggle('opacity');
+      this.listBody.querySelector('.list__listCountry').classList.toggle('opacity');
     }, 400);
   }
 
@@ -158,17 +162,18 @@ export default class List {
   * @param {letter} - the characters by which the list is sorted.
   */
   changeSearch(e) {
-    document.querySelector('.list__listCountry').classList.toggle('opacity');
+    this.listBody.querySelector('.list__listCountry').classList.toggle('opacity');
     setTimeout(() => {
-      if (!document.querySelector('.searchBody')) {
-        document.body.append(createElement('div', 'searchBody', ''));
+      if (!this.listBody.querySelector('.searchBody')) {
+        this.listBody.append(createElement('div', 'searchBody', ''));
       }
 
       if (new RegExp('[a-zA-Z]').test(e.key)) {
         this.clearListCountry();
-        this.createListCountry(document.querySelector('.list__inputCountry').value);
+        this.sorter = this.listBody.querySelector('.list__inputCountry').value;
+        this.createListCountry(this.country, this.dataPromise);
       }
-      document.querySelector('.list__listCountry').classList.toggle('opacity');
+      this.listBody.querySelector('.list__listCountry').classList.toggle('opacity');
     }, 750);
   }
 
@@ -177,7 +182,7 @@ export default class List {
   * @returns {EventListener} - add eventListener to input.
   */
   clickInputCountry() {
-    document.querySelector('.list__inputCountry').addEventListener('click', () => {
+    this.listBody.querySelector('.list__inputCountry').addEventListener('click', () => {
       this.setFocus();
     });
   }
@@ -187,7 +192,7 @@ export default class List {
   * @returns {EventListener} - add eventListener to inputs.
   */
   blurInputCountry() {
-    document.querySelector('.list__inputCountry').addEventListener('blur', () => {
+    this.listBody.querySelector('.list__inputCountry').addEventListener('blur', () => {
       this.clearFocus();
     });
   }
@@ -197,7 +202,7 @@ export default class List {
   * @returns {EventListener} - adds a restriction on entered characters.
   */
   keyPressInputCountry() {
-    document.querySelector('.list__inputCountry').addEventListener('keyup', (e) => {
+    this.listBody.querySelector('.list__inputCountry').addEventListener('keyup', (e) => {
       e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '');
       this.changeSearch(e);
     });
@@ -206,37 +211,31 @@ export default class List {
   /**
   * Get markup for the body list.
   */
-  createList() {
-    document.querySelector('#root').append(createElement('div', 'list', ''));
+  createList(country, dataPromise) {
+    this.listBody = createElement('div', 'list', '');
 
-    const listBody = document.querySelector('.list');
-
-    listBody.append(createElement('div', 'list__queryCountry', ''));
-    document.querySelector('.list__queryCountry').append(createElement('input', 'list__inputCountry', ''));
-    document.querySelector('.list__inputCountry').value = '[enter country]';
-    document.querySelector('.list__inputCountry').setAttribute('contenteditable', 'true');
+    this.listBody.append(createElement('div', 'list__queryCountry', ''));
+    this.listBody.querySelector('.list__queryCountry').append(createElement('input', 'list__inputCountry', ''));
+    this.listBody.querySelector('.list__inputCountry').value = '[enter country]';
+    this.listBody.querySelector('.list__inputCountry').setAttribute('contenteditable', 'true');
 
     this.clickInputCountry();
     this.blurInputCountry();
     this.keyPressInputCountry();
 
-    listBody.append(createElement('div', 'list__sortingСriteria', ''));
+    this.listBody.append(createElement('div', 'list__sortingСriteria', ''));
     this.createQueryCountry();
 
-    listBody.append(createElement('div', 'list__listCountry', ''));
-    this.createListCountry();
-
-    this.bindSelectChange();
-
-    this.switchersContainer = listBody.querySelector('.switchers');
+    this.listBody.append(createElement('div', 'list__listCountry', ''));
+    this.createListCountry(country, dataPromise);
+    this.switchersContainer = this.listBody.querySelector('.switchers');
   }
 
-  bindSelectChange() {
-    document.querySelectorAll('.switchers').forEach((el) => {
+  bindSelectChange(handler) {
+    this.listBody.querySelectorAll('.switchers').forEach((el) => {
       el.addEventListener('change', (evt) => {
         this[evt.target.name] = evt.target.value;
-        this.clearListCountry();
-        this.createListCountry();
+        handler(evt.target.name, evt.target.value);
       });
     });
   }
