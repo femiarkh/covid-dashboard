@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 $font-color: #1a1a1a;
@@ -81,12 +82,10 @@ body {
   -webkit-box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
   box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
-
   &__queryCountry {
     z-index: 6;
     margin-bottom: 1rem;
   }
-
   &__inputCountry {
     box-sizing: border-box;
     width: 100%;
@@ -101,7 +100,6 @@ body {
     background-position: center;
     position: relative;
   }
-
   .listCountry__countryEl {
     margin-top: 1rem;
     display: flex;
@@ -126,19 +124,16 @@ body {
     border: 1px solid black;
     border-radius: 2rem;
   }
-
   .countryEl__name {
     font-size: 1.8rem;
     font-weight: 600;
     text-align: center;
   }
-
   .countryEl__count {
     font-size: 1.55rem;
     font-weight: 300;
   }
 }
-
 .switchers {
   transition: 0.75s ease all;
   z-index: 4;
@@ -165,26 +160,83 @@ body {
   border: 1px solid rebeccapurple;
 }
 
+#mapid {
+  width: 70rem;
+  height: 40rem;
+  transition: 0.5s ease all;
+}
+.map {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  &__country_name {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+  &__country_value {
+    margin: 0.6rem 0rem;
+    text-align: center;
+    font-size: 1.7rem;
+    font-weight: 500;
+  }
+  &__sortingСriteria {
+    position: relative;
+  }
+  &__legend {
+    width: 12rem;
+    height: 12rem;
+    background-color: #222222de;
+    position: relative;
+    top: -12rem;
+    right: 0;
+    z-index: 1000;
+    align-self: flex-end;
+    &_name {
+      text-align: center;
+      font-weight: 200;
+      color: white;
+      margin-bottom: 0.7rem;
+    }
+    &_body {
+      display: flex;
+      flex-direction: column;
+    }
+    &_item {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 0.3rem;
+    }
+    &_circle {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      opacity: 0.7;
+      border: 1px solid black;
+    }
+    &_circleName {
+      width: 7rem;
+      text-align: center;
+      font-weight: 200;
+      color: white;
+    }
+  }
+  .mapidNS {
+    width: 2rem;
+  }
+}
 .opacity {
   opacity: 0;
 }
-
 .listFS {
   width: 100%;
 }
-
 .mapNS {
-  width: 0;
+  width: 0rem;
 }
-
-.mapidNS {
-  width: 0;
-}
-
 .mapSC {
   display: none;
 }
-
 .switchUp {
   top: -6rem;
 }

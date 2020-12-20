@@ -1,13 +1,28 @@
 {
-  "extends": [
-    "airbnb-base",
-    "eslint:recommended"
-  ],
-  "env": {
-    "node": true,
-    "browser": true
-  },
-  "rules": {
-    "linebreak-style": 0
-  }
-}
+	"extends": [
+		"airbnb-base",
+		"eslint:recommended"
+	],
+	"env": {
+		"node": true,
+		"browser": true
+	},
+	"rules": {
+		"lines-between-class-members": [
+			"error",
+			"always",
+			{
+				"exceptAfterSingleLine": true
+			}
+		],
+		"linebreak-style": 0,
+		"no-param-reassign": [
+			"error",
+			{
+				"props": false
+			}
+		]
+	},
+	"globals": {
+		"L": true
+	}

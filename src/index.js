@@ -2,6 +2,7 @@ import './styles/main.scss';
 import CovidTable from './js/covid-table';
 import CovidChart from './js/covid-chart';
 import CovidList from './js/covid-list';
+import CovidMap from './js/map';
 import createElement from './js/utils/create-element';
 import URLS from './js/const/api-urls';
 
