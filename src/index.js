@@ -2,7 +2,7 @@ import './styles/main.scss';
 import CovidTable from './js/covid-table';
 import CovidChart from './js/covid-chart';
 import CovidList from './js/covid-list';
-import CovidMap from './js/map';
+import CovidMap from './js/covid-map';
 import createElement from './js/utils/create-element';
 import URLS from './js/const/api-urls';
 
@@ -14,11 +14,12 @@ class App {
    * App should take Covid Table, Covid Map, Covid List and Covid Chart as its parameters.
    * @param {object} table - instance of Covid Table class.
    */
-  constructor(table, chart, list) {
+  constructor(table, chart, list, map) {
     this.table = table;
     this.chart = chart;
     this.list = list;
-    this.observers = [this.table, this.chart, this.list];
+    this.map = map;
+    this.observers = [this.table, this.chart, this.list, this.map];
     this.country = null;
     this.name = 'Covid-19 Dashboard';
     this.header = createElement('h1', 'app-name', this.name);
@@ -27,10 +28,12 @@ class App {
     this.table.updateData(this.country, this.dataPromise);
     this.chart.buildChart(this.country, this.dataPromise);
     this.list.createList(this.country, this.dataPromise);
+    this.map.createMap(this.country, this.dataPromise);
     this.table.bindSelectChange(this.updateDataHandler.bind(this));
     this.chart.bindSelectChange(this.updateDataHandler.bind(this));
     this.list.bindSelectChange(this.updateDataHandler.bind(this));
     this.list.bindCountryPick(this.changeCountryHandler.bind(this));
+    this.map.bindSelectChange(this.updateDataHandler.bind(this));
   }
 
   /**
@@ -96,8 +99,9 @@ class App {
   }
 }
 
-const app = new App(new CovidTable(), new CovidChart(), new CovidList());
+const app = new App(new CovidTable(), new CovidChart(), new CovidList(), new CovidMap());
 app.container.append(app.header);
 app.container.append(app.table.element);
 app.container.append(app.chart.element);
 app.container.append(app.list.listBody);
+app.container.append(app.map.mapBody);
