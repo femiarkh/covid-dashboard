@@ -41,6 +41,7 @@ export default class Map {
     };
     this.popupOptions = {
       closeButton: false,
+      autoClose: true,
     };
     this.switchersContainer = [];
     this.map = [];
@@ -53,6 +54,10 @@ export default class Map {
     };
     this.oneHundredThousand = 100000;
     this.zoomCircle = 11;
+    this.countryNow = null;
+    this.possibleClick = false;
+    this.firsLoad = true;
+    this.numberNow = 0;
     this.saveEl = ['AFG', 'ALB', 'DZA', 'AGO', 'ARG', 'ARM', 'AUS', 'AUT', 'AZE', 'BHS', 'BGD', 'BLR',
       'BEL', 'BLZ', 'BEN', 'BMU', 'BTN', 'BOL', 'BIH', 'BWA', 'BRA', 'BRN', 'BGR', 'BFA', 'BDI', 'KHM',
       'CMR', 'CAN', 'CAF', 'TCD', 'CHL', 'CHN', 'COL', 'COG', 'CRI', 'HRV', 'CUB', 'CYP', 'CZE', 'CIV',
@@ -90,7 +95,7 @@ export default class Map {
    * @param {coordinate} - takes coordinates.
    */
   changeLocate(lat, long) {
-    this.map.setView(new L.LatLng(lat, long), 3);
+    this.map.setView(new L.LatLng(lat, long), 4);
   }
 
   /**
@@ -153,36 +158,39 @@ export default class Map {
                 : element[valueNameNow];
 
               const geo = L.geoJSON(dataEl, this.geoOptions)
-                .bindPopup(new L.Popup(this.popupOptions)
-                  .setLatLng([element.countryInfo.lat, element.countryInfo.long])
-                  .setContent(`<h2 class = 'map__country_name'>${element.country}</h2><p class = 'map__country_value'>${addCommas(countPerson)} people</p>`))
+                .bindTooltip(new L.Tooltip(this.popupOptions)
+                  .setContent(`<h2 class = 'map__country_name'>${element.country}</h2>
+                      <p class = 'map__country_value'>${addCommas(countPerson)} people</p>`))
                 .addTo(this.map);
+              geo.on('click', () => {
+                this.countryNow = element.country;
+                this.possibleClick = true;
+              });
+
               this.geoLayerGroup.addLayer(geo);
-            })
-            .then(() => {
-              const countPerson = valueTypeNow ? Math.floor((element[valueNameNow]
-                / (element.population / this.oneHundredThousand)))
-                : element[valueNameNow];
 
               const circle = L.circle([element.countryInfo.lat, element.countryInfo.long],
                 countPerson / this.zoomCircle, this.circleOptions)
-                .bindPopup(new L.Popup(this.popupOptions)
+                .bindTooltip(new L.Tooltip(this.popupOptions)
                   .setLatLng([element.countryInfo.lat, element.countryInfo.long])
                   .setContent(`<h2 class = 'map__country_name'>${element.country}</h2>
-                  <p class = 'map__country_value'>${addCommas(countPerson)} people</p>`));
+                  <p class = 'map__country_value'>${addCommas(countPerson)} people</p>`))
+                .addTo(this.map);
+
+              circle.on('click', () => {
+                this.countryNow = element.country;
+                this.possibleClick = true;
+              });
 
               this.circleLayerGroup.addLayer(circle);
               this.saveEl.push(element.countryInfo.iso3);
             });
         }
       });
-    })
-      .then(() => {
-        this.geoLayerGroup.addTo(this.map);
-      })
-      .then(() => {
-        this.circleLayerGroup.addTo(this.map);
-      });
+
+      this.geoLayerGroup.addTo(this.map);
+      this.circleLayerGroup.addTo(this.map);
+    });
   }
 
   /**
@@ -190,9 +198,7 @@ export default class Map {
    */
   createMapLegend() {
     document.querySelector('.map').append(createElement('div', 'map__legend', ''));
-
     document.querySelector('.map__legend').append(createElement('h2', 'map__legend_name', 'Map Legend'));
-
     document.querySelector('.map__legend').append(createElement('h2', 'map__legend_body', ''));
     for (let i = 0; i < 3; i += 1) {
       document.querySelector('.map__legend_body').append(createElement('div', 'map__legend_item', ''));
@@ -234,10 +240,26 @@ export default class Map {
     this.geoLayerGroup.clearLayers();
     this.circleLayerGroup.clearLayers();
     this.createMapBody(country, dataPromise);
+
+    document.querySelector('#mapid').click();
+    document.querySelector('#mapid').click();
+    document.querySelector('#mapid').click();
+
     this.dataPromise.then((result) => {
       const data = result[DATASET_INDEXES.allCountries];
-      const { countryInfo } = data.find((el) => el.country === country);
-      this.changeLocate(countryInfo.lat, countryInfo.long);
+      const element = data.find((el) => el.country === country);
+      this.changeLocate(element.countryInfo.lat, element.countryInfo.long);
+
+      const allCountry = document.querySelectorAll('.listCountry__countryEl');
+      allCountry.forEach((el) => {
+        if (el.querySelector('.countryEl__name').innerText === country) {
+          new L.Popup(this.popupOptions)
+            .setLatLng([element.countryInfo.lat, element.countryInfo.long])
+            .setContent(`<h2 class = 'map__country_name'>${country}</h2>
+                  <p class = 'map__country_value'>${el.querySelector('.countryEl__count').innerText} people</p> `)
+            .addTo(this.map);
+        }
+      });
     });
   }
 
@@ -254,7 +276,12 @@ export default class Map {
     });
   }
 
-  // bindCountryPick(handler) {
-  //   To be implemented soon...
-  // }
+  bindCountryPick(handler) {
+    document.querySelector('#mapid').addEventListener('click', () => {
+      if (this.possibleClick === true) {
+        this.possibleClick = false;
+        handler(this.countryNow);
+      }
+    });
+  }
 }

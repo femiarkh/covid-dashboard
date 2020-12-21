@@ -34,6 +34,7 @@ class App {
     this.list.bindSelectChange(this.updateDataHandler.bind(this));
     this.list.bindCountryPick(this.changeCountryHandler.bind(this));
     this.map.bindSelectChange(this.updateDataHandler.bind(this));
+    this.map.bindCountryPick(this.changeCountryHandler.bind(this));
   }
 
   /**
