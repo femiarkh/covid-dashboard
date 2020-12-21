@@ -5,13 +5,10 @@ import PARAMETERS from './const/parameters';
 import Switchers from './switchers';
 
 /**
-  * Get markup for the Covid Map.
-  * @param {function} - takes Data Base.
-  * @returns {DOM element} - DOM element with Covid-Map.
-  */
-export default class List {
-  constructor(dataBase) {
-    this.dataBase = dataBase;
+ * Class representing the Covid Map.
+ */
+export default class Map {
+  constructor() {
     this.returnSettingKeys = {
       Cases: 'cases',
       Deaths: 'deaths',
@@ -70,17 +67,17 @@ export default class List {
       'VNM', 'ESH', 'YEM', 'ZMB', 'ZWE', 'NER'];
 
     /**
-* Creates switchers to the body of the list.
-*/
+     * Creates switchers to the body of the list.
+     */
     this.createQueryCountry = () => {
       document.querySelector('.map__sortingСriteria')
         .append(new Switchers(SELECTS.mapSelects).element);
     };
     /**
-    * Returns the value input.
-    * @param {number} - takes the seat number in switchers.
-    * @returns {string} - the value select.
-    */
+     * Returns the value input.
+     * @param {number} - takes the seat number in switchers.
+     * @returns {string} - the value select.
+     */
     this.returnSwitchersEl = (num) => {
       const switchersEl = this.mapBody.querySelectorAll('.switchers__switcher');
       return switchersEl[num].options[switchersEl[num].options.selectedIndex].text;
@@ -88,17 +85,17 @@ export default class List {
   }
 
   /**
-* Sets the position of the map on the country.
-* @param {coordinate} - takes coordinates.
-*/
+   * Sets the position of the map on the country.
+   * @param {coordinate} - takes coordinates.
+   */
   changeLocate(lat, long) {
     this.map.setView(new L.LatLng(lat, long), 3);
   }
 
   /**
-* Get markup for the Map.
-* @param {string} - value from first,second,third select.
-*/
+   * Get markup for the Map.
+   * @param {string} - value from first,second,third select.
+   */
   createMapBody(country, dataPromise) {
     this.dataPromise = dataPromise;
     const valueName = this.returnSwitchersEl(0);
@@ -112,15 +109,15 @@ export default class List {
       valueNameNow = periodNow + valueName[0].toUpperCase() + valueName.slice(1);
     }
 
-    if (valueName === 'Cases') {
+    if (valueName.toLowerCase() === PARAMETERS.valueName.cases) {
       this.circleOptions.color = 'red';
       this.circleOptions.fillColor = 'red';
       this.zoomCircle = 11;
-    } else if (valueName === 'Deaths') {
+    } else if (valueName.toLowerCase() === PARAMETERS.valueName.deaths) {
       this.circleOptions.color = 'green';
       this.circleOptions.fillColor = 'green';
       this.zoomCircle = 1;
-    } else if (valueName === 'Recovered') {
+    } else if (valueName.toLowerCase() === PARAMETERS.valueName.recovered) {
       this.circleOptions.color = 'yellow';
       this.circleOptions.fillColor = 'yellow';
       this.zoomCircle = 8;
@@ -188,8 +185,8 @@ export default class List {
   }
 
   /**
-* Get markup for the Map legend.
-*/
+   * Get markup for the Map legend.
+   */
   createMapLegend() {
     document.querySelector('.map').append(createElement('div', 'map__legend', ''));
 
@@ -209,8 +206,8 @@ export default class List {
   }
 
   /**
-* Get markup for the body map.
-*/
+   * Get markup for the body map.
+   */
   createMap(country, dataPromise) {
     document.querySelector('#root').append(createElement('div', 'map', ''));
     this.mapBody = document.querySelector('.map');
@@ -223,39 +220,30 @@ export default class List {
     this.mapBody.appendChild(mapid);
 
     this.createMapLegend();
-
-    this.bindSelectChange();
-
     this.switchersContainer = this.mapBody.querySelector('.switchers');
-
     this.createMapBody(country, dataPromise);
   }
 
   /**
-* Determines the selected country from the list.
-*/
-  setCountryPlace() {
-    document.querySelector('.list__listCountry').addEventListener('click', (evt) => {
-      if (evt.path[0].className === 'listCountry__countryEl' || evt.path[1].className === 'listCountry__countryEl') {
-        this.dataBase.then((result) => {
-          const country = result.find((el) => el.country === (evt.path[0].className === 'listCountry__countryEl'
-            ? evt.path[0].children[1].innerText : evt.path[1].children[1].innerText)).countryInfo;
-
-          this.changeLocate(country.lat, country.long);
-        });
-      }
-    });
-  }
-
-  /**
- * Handler for updating all the data in the app.* Handler for updating all the data in the app.
- */
+   * Update data in the map.
+   * @param {string} country - A country name.
+   * @param {object} dataPromise - Promise with datasets.
+   */
   updateData(country, dataPromise) {
     this.geoLayerGroup.clearLayers();
     this.circleLayerGroup.clearLayers();
     this.createMapBody(country, dataPromise);
+    this.dataPromise.then((result) => {
+      const data = result[DATASET_INDEXES.allCountries];
+      const { countryInfo } = data.find((el) => el.country === country);
+      this.changeLocate(countryInfo.lat, countryInfo.long);
+    });
   }
 
+  /**
+   * Update state of the map every time select is changed.
+   * @param {function} - Handler passed by the app.
+   */
   bindSelectChange(handler) {
     document.querySelectorAll('.switchers').forEach((el) => {
       el.addEventListener('change', (evt) => {
@@ -264,4 +252,8 @@ export default class List {
       });
     });
   }
+
+  // bindCountryPick(handler) {
+  //   To be implemented soon...
+  // }
 }
