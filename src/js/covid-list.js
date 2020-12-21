@@ -59,10 +59,6 @@ export default class List {
     this.setFocus = () => {
       this.listBody.querySelector('.list__inputCountry').value = '';
       this.listBody.classList.toggle('listFS');
-      // document.querySelector('.map').classList.toggle('mapNS');
-      // document.querySelector('#mapid').classList.toggle('mapidNS');
-      // document.querySelector('.map__sortingСriteria').classList.toggle('mapSC');
-      // document.querySelector('.map__legend').classList.toggle('opacity');
       this.listBody.querySelector('.switchers').classList.toggle('switchUp');
       this.listBody.querySelector('.list__listCountry').classList.toggle('switchUp');
     };
@@ -149,18 +145,15 @@ export default class List {
     }
 
     this.listBody.classList.toggle('listFS');
-    // document.querySelector('.map').classList.toggle('mapNS');
-    // document.querySelector('#mapid').classList.toggle('mapidNS');
     this.listBody.querySelector('.switchers').classList.toggle('switchUp');
     this.listBody.querySelector('.list__listCountry').classList.toggle('switchUp');
     setTimeout(() => {
       this.clearListCountry();
+      this.sorter = null;
       this.listBody.querySelector('.list__listCountry').classList.toggle('opacity');
-      // document.querySelector('.map__sortingСriteria').classList.toggle('mapSC');
-    }, 100);
+    }, 200);
     setTimeout(() => {
       this.createListCountry(this.country, this.dataPromise);
-      // document.querySelector('.map__legend').classList.toggle('opacity');
       this.listBody.querySelector('.list__listCountry').classList.toggle('opacity');
     }, 400);
   }

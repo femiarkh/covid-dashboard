@@ -1,15 +1,15 @@
 import createElement from './utils/create-element';
 import SELECTS from './const/selects';
+import DATASET_INDEXES from './const/dataset-indexes';
+import PARAMETERS from './const/parameters';
 import Switchers from './switchers';
+import addCommas from './utils/add-commas';
 
 /**
-  * Get markup for the Covid Map.
-  * @param {function} - takes Data Base.
-  * @returns {DOM element} - DOM element with Covid-Map.
-  */
-export default class List {
-  constructor(dataBase) {
-    this.dataBase = dataBase;
+ * Class representing the Covid Map.
+ */
+export default class Map {
+  constructor() {
     this.returnSettingKeys = {
       Cases: 'cases',
       Deaths: 'deaths',
@@ -41,6 +41,7 @@ export default class List {
     };
     this.popupOptions = {
       closeButton: false,
+      autoClose: true,
     };
     this.switchersContainer = [];
     this.map = [];
@@ -53,11 +54,15 @@ export default class List {
     };
     this.oneHundredThousand = 100000;
     this.zoomCircle = 11;
+    this.countryNow = null;
+    this.possibleClick = false;
+    this.firsLoad = true;
+    this.numberNow = 0;
     this.saveEl = ['AFG', 'ALB', 'DZA', 'AGO', 'ARG', 'ARM', 'AUS', 'AUT', 'AZE', 'BHS', 'BGD', 'BLR',
       'BEL', 'BLZ', 'BEN', 'BMU', 'BTN', 'BOL', 'BIH', 'BWA', 'BRA', 'BRN', 'BGR', 'BFA', 'BDI', 'KHM',
       'CMR', 'CAN', 'CAF', 'TCD', 'CHL', 'CHN', 'COL', 'COG', 'CRI', 'HRV', 'CUB', 'CYP', 'CZE', 'CIV',
       'COD', 'DNK', 'DJI', 'DOM', 'ECU', 'EGY', 'SLV', 'GNQ', 'ERI', 'EST', 'ETH', 'FLK', 'FJI', 'FIN',
-      'FRA', 'GUF', 'GAB', 'GMB', 'GEO', 'DEU', 'GHA', 'GRC', 'GRL', 'GTM', 'GIN', 'GNB', 'GUY', 'HTI',
+      'FRA', 'GUF', 'GAB', 'GMB', 'GEO', 'DEU', 'GHA', 'GRC', 'GTM', 'GIN', 'GNB', 'GUY', 'HTI',
       'HND', 'HUN', 'ISL', 'IND', 'IDN', 'IRN', 'IRQ', 'IRL', 'ISR', 'ITA', 'JAM', 'JPN', 'JOR', 'KAZ',
       'KEN', 'KWT', 'KGZ', 'LAO', 'LVA', 'LBN', 'LSO', 'LBR', 'LBY', 'LTU', 'LUX', 'MKD', 'MDG', 'MWI',
       'MYS', 'MLI', 'MLT', 'MRT', 'MEX', 'MDA', 'MNG', 'MNE', 'MAR', 'MOZ', 'MMR', 'NAM', 'NPL', 'NLD',
@@ -68,37 +73,40 @@ export default class List {
       'VNM', 'ESH', 'YEM', 'ZMB', 'ZWE', 'NER'];
 
     /**
-* Creates switchers to the body of the list.
-*/
+     * Creates switchers to the body of the list.
+     */
     this.createQueryCountry = () => {
       document.querySelector('.map__sortingСriteria')
         .append(new Switchers(SELECTS.mapSelects).element);
     };
     /**
-    * Returns the value input.
-    * @param {number} - takes the seat number in switchers.
-    * @returns {string} - the value select.
-    */
+     * Returns the value input.
+     * @param {number} - takes the seat number in switchers.
+     * @returns {string} - the value select.
+     */
     this.returnSwitchersEl = (num) => {
-      const switchersEl = document.querySelectorAll('.switchers__switcher');
+      const switchersEl = this.mapBody.querySelectorAll('.switchers__switcher');
       return switchersEl[num].options[switchersEl[num].options.selectedIndex].text;
     };
   }
 
   /**
-* Sets the position of the map on the country.
-* @param {coordinate} - takes coordinates.
-*/
+   * Sets the position of the map on the country.
+   * @param {coordinate} - takes coordinates.
+   */
   changeLocate(lat, long) {
-    this.map.setView(new L.LatLng(lat, long), 3);
+    this.map.setView(new L.LatLng(lat, long), 2.5);
   }
 
   /**
-* Get markup for the Map.
-* @param {string} - value from first,second,third select.
-*/
-  createMapBody(valueName = this.returnSwitchersEl(0),
-    period = this.returnSwitchersEl(1), valueType = this.returnSwitchersEl(2)) {
+   * Get markup for the Map.
+   * @param {string} - value from first,second,third select.
+   */
+  createMapBody(country, dataPromise) {
+    this.dataPromise = dataPromise;
+    const valueName = this.returnSwitchersEl(0);
+    const period = this.returnSwitchersEl(1);
+    const valueType = this.returnSwitchersEl(2);
     let valueNameNow = this.returnSettingKeys[valueName];
     const periodNow = this.returnSettingKeys[period];
     const valueTypeNow = this.returnSettingKeys[valueType];
@@ -107,15 +115,15 @@ export default class List {
       valueNameNow = periodNow + valueName[0].toUpperCase() + valueName.slice(1);
     }
 
-    if (valueName === 'Cases') {
+    if (valueName.toLowerCase() === PARAMETERS.valueName.cases) {
       this.circleOptions.color = 'red';
       this.circleOptions.fillColor = 'red';
       this.zoomCircle = 11;
-    } else if (valueName === 'Deaths') {
+    } else if (valueName.toLowerCase() === PARAMETERS.valueName.deaths) {
       this.circleOptions.color = 'green';
       this.circleOptions.fillColor = 'green';
       this.zoomCircle = 1;
-    } else if (valueName === 'Recovered') {
+    } else if (valueName.toLowerCase() === PARAMETERS.valueName.recovered) {
       this.circleOptions.color = 'yellow';
       this.circleOptions.fillColor = 'yellow';
       this.zoomCircle = 8;
@@ -129,59 +137,86 @@ export default class List {
     this.geoLayerGroup = new L.LayerGroup();
     this.circleLayerGroup = new L.LayerGroup();
 
-    this.dataBase.then((result) => {
-      result.forEach((element) => {
+    this.dataPromise.then((result) => {
+      let data;
+      const currentPeriod = document.querySelector('.switchers__switcher--period').value;
+      if (currentPeriod === PARAMETERS.period.lastDay) {
+        data = result[DATASET_INDEXES.allCountriesYesterday];
+      } else {
+        data = result[DATASET_INDEXES.allCountries];
+      }
+      data.forEach((element) => {
         if (this.saveEl.find((el) => el === element.countryInfo.iso3)) {
           fetch(`https://raw.githubusercontent.com/johan/world.geo.json/master/countries/${element.countryInfo.iso3}.geo.json`,
             this.myFetchSetting)
             .then((res) => res.json())
-            .then((data) => {
+            .then((dates) => {
+              const dataEl = dates;
               const countPerson = valueTypeNow
                 ? Math.floor((element[valueNameNow]
                   / (element.population / this.oneHundredThousand)))
                 : element[valueNameNow];
 
-              const geo = L.geoJSON(data, this.geoOptions).bindPopup(new L.Popup(this.popupOptions)
-                .setLatLng([element.countryInfo.lat, element.countryInfo.long])
-                .setContent(`<h2 class = 'map__country_name'>${element.country}</h2><p class = 'map__country_value'>${countPerson} people</p>`))
+              const geo = L.geoJSON(dataEl, this.geoOptions)
+                .bindTooltip(new L.Tooltip(this.popupOptions)
+                  .setContent(`<h2 class = 'map__country_name'>${element.country}</h2>
+                      <p class = 'map__country_value'>${addCommas(countPerson)} people</p>`))
                 .addTo(this.map);
+              geo.on('click', () => {
+                this.countryNow = element.country;
+                this.possibleClick = true;
+              });
+              geo.on('mouseover', () => {
+                geo.setStyle({
+                  color: 'red',
+                  fillColor: 'white',
+                  fillOpacity: 0.2,
+                  weight: 3,
+                });
+              });
+              geo.on('mouseout', () => {
+                geo.setStyle({
+                  color: 'blue',
+                  fillColor: 'white',
+                  fillRule: 'nonzero',
+                  fillOpacity: 0.1,
+                  weight: 1,
+                });
+              });
+
 
               this.geoLayerGroup.addLayer(geo);
-            })
-            .then(() => {
-              const countPerson = valueTypeNow ? Math.floor((element[valueNameNow]
-                / (element.population / this.oneHundredThousand)))
-                : element[valueNameNow];
 
               const circle = L.circle([element.countryInfo.lat, element.countryInfo.long],
                 countPerson / this.zoomCircle, this.circleOptions)
-                .bindPopup(new L.Popup(this.popupOptions)
+                .bindTooltip(new L.Tooltip(this.popupOptions)
                   .setLatLng([element.countryInfo.lat, element.countryInfo.long])
                   .setContent(`<h2 class = 'map__country_name'>${element.country}</h2>
-                  <p class = 'map__country_value'>${countPerson} people</p>`));
+                  <p class = 'map__country_value'>${addCommas(countPerson)} people</p>`))
+                .addTo(this.map);
+
+              circle.on('click', () => {
+                this.countryNow = element.country;
+                this.possibleClick = true;
+              });
 
               this.circleLayerGroup.addLayer(circle);
               this.saveEl.push(element.countryInfo.iso3);
             });
         }
       });
-    })
-      .then(() => {
-        this.geoLayerGroup.addTo(this.map);
-      })
-      .then(() => {
-        this.circleLayerGroup.addTo(this.map);
-      });
+
+      this.geoLayerGroup.addTo(this.map);
+      this.circleLayerGroup.addTo(this.map);
+    });
   }
 
   /**
-* Get markup for the Map legend.
-*/
+   * Get markup for the Map legend.
+   */
   createMapLegend() {
     document.querySelector('.map').append(createElement('div', 'map__legend', ''));
-
     document.querySelector('.map__legend').append(createElement('h2', 'map__legend_name', 'Map Legend'));
-
     document.querySelector('.map__legend').append(createElement('h2', 'map__legend_body', ''));
     for (let i = 0; i < 3; i += 1) {
       document.querySelector('.map__legend_body').append(createElement('div', 'map__legend_item', ''));
@@ -196,64 +231,79 @@ export default class List {
   }
 
   /**
-* Get markup for the body map.
-*/
-  createMap() {
+   * Get markup for the body map.
+   */
+  createMap(country, dataPromise) {
     document.querySelector('#root').append(createElement('div', 'map', ''));
-    const mapBody = document.querySelector('.map');
+    this.mapBody = document.querySelector('.map');
 
-    mapBody.append(createElement('div', 'map__sortingСriteria', ''));
+    this.mapBody.append(createElement('div', 'map__sortingСriteria', ''));
     this.createQueryCountry();
 
     const mapid = document.createElement('div');
     mapid.id = 'mapid';
-    mapBody.appendChild(mapid);
+    this.mapBody.appendChild(mapid);
 
     this.createMapLegend();
-
-    this.createMapBody();
-
-    this.bindSelectChange();
-
-    this.setCountryPlace();
-
-    this.switchersContainer = mapBody.querySelector('.switchers');
+    this.switchersContainer = this.mapBody.querySelector('.switchers');
+    this.createMapBody(country, dataPromise);
   }
 
   /**
- * Handler for updating all the data in the app.* Handler for updating all the data in the app.
- */
-  updateData() {
+   * Update data in the map.
+   * @param {string} country - A country name.
+   * @param {object} dataPromise - Promise with datasets.
+   */
+  updateData(country, dataPromise) {
     this.geoLayerGroup.clearLayers();
     this.circleLayerGroup.clearLayers();
-    this.createMapBody();
-  }
+    this.createMapBody(country, dataPromise);
 
-  /**
-* Determines the selected country from the list.
-*/
-  setCountryPlace() {
-    document.querySelector('.list__listCountry').addEventListener('click', (evt) => {
-      if (evt.path[0].className === 'listCountry__countryEl' || evt.path[1].className === 'listCountry__countryEl') {
-        this.dataBase.then((result) => {
-          const country = result.find((el) => el.country === (evt.path[0].className === 'listCountry__countryEl'
-            ? evt.path[0].children[1].innerText : evt.path[1].children[1].innerText)).countryInfo;
+    document.querySelector('#mapid').click();
+    document.querySelector('#mapid').click();
+    document.querySelector('#mapid').click();
 
-          this.changeLocate(country.lat, country.long);
-        });
-      }
+    this.dataPromise.then((result) => {
+      const data = result[DATASET_INDEXES.allCountries];
+      const element = data.find((el) => el.country === country);
+      this.changeLocate(element.countryInfo.lat, element.countryInfo.long);
+
+      const allCountry = document.querySelectorAll('.listCountry__countryEl');
+      allCountry.forEach((el) => {
+        if (el.querySelector('.countryEl__name').innerText === country) {
+          new L.Popup(this.popupOptions)
+            .setLatLng([element.countryInfo.lat, element.countryInfo.long])
+            .setContent(`<h2 class = 'map__country_name'>${country}</h2>
+                  <p class = 'map__country_value'>${el.querySelector('.countryEl__count').innerText} people</p> `)
+            .addTo(this.map);
+        }
+      });
     });
   }
 
-  bindSelectChange() {
+  /**
+   * Update state of the map every time select is changed.
+   * @param {function} - Handler passed by the app.
+   */
+  bindSelectChange(handler) {
     document.querySelectorAll('.switchers').forEach((el) => {
       el.addEventListener('change', (evt) => {
         this[evt.target.name] = evt.target.value;
-
-        this.geoLayerGroup.clearLayers();
-        this.circleLayerGroup.clearLayers();
-        this.createMapBody();
+        handler(evt.target.name, evt.target.value);
       });
+    });
+  }
+
+  bindCountryPick(handler) {
+    document.querySelector('#mapid').addEventListener('click', () => {
+      if (this.possibleClick === true) {
+        this.possibleClick = false;
+        handler(this.countryNow);
+        setTimeout(() => {
+          document.querySelector('#mapid').click();
+        }, 800)
+      }
+
     });
   }
 }
