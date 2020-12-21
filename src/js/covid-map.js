@@ -62,7 +62,7 @@ export default class Map {
       'BEL', 'BLZ', 'BEN', 'BMU', 'BTN', 'BOL', 'BIH', 'BWA', 'BRA', 'BRN', 'BGR', 'BFA', 'BDI', 'KHM',
       'CMR', 'CAN', 'CAF', 'TCD', 'CHL', 'CHN', 'COL', 'COG', 'CRI', 'HRV', 'CUB', 'CYP', 'CZE', 'CIV',
       'COD', 'DNK', 'DJI', 'DOM', 'ECU', 'EGY', 'SLV', 'GNQ', 'ERI', 'EST', 'ETH', 'FLK', 'FJI', 'FIN',
-      'FRA', 'GUF', 'GAB', 'GMB', 'GEO', 'DEU', 'GHA', 'GRC', 'GRL', 'GTM', 'GIN', 'GNB', 'GUY', 'HTI',
+      'FRA', 'GUF', 'GAB', 'GMB', 'GEO', 'DEU', 'GHA', 'GRC', 'GTM', 'GIN', 'GNB', 'GUY', 'HTI',
       'HND', 'HUN', 'ISL', 'IND', 'IDN', 'IRN', 'IRQ', 'IRL', 'ISR', 'ITA', 'JAM', 'JPN', 'JOR', 'KAZ',
       'KEN', 'KWT', 'KGZ', 'LAO', 'LVA', 'LBN', 'LSO', 'LBR', 'LBY', 'LTU', 'LUX', 'MKD', 'MDG', 'MWI',
       'MYS', 'MLI', 'MLT', 'MRT', 'MEX', 'MDA', 'MNG', 'MNE', 'MAR', 'MOZ', 'MMR', 'NAM', 'NPL', 'NLD',
@@ -95,7 +95,7 @@ export default class Map {
    * @param {coordinate} - takes coordinates.
    */
   changeLocate(lat, long) {
-    this.map.setView(new L.LatLng(lat, long), 4);
+    this.map.setView(new L.LatLng(lat, long), 2.5);
   }
 
   /**
@@ -166,6 +166,24 @@ export default class Map {
                 this.countryNow = element.country;
                 this.possibleClick = true;
               });
+              geo.on('mouseover', () => {
+                geo.setStyle({
+                  color: 'red',
+                  fillColor: 'white',
+                  fillOpacity: 0.2,
+                  weight: 3,
+                });
+              });
+              geo.on('mouseout', () => {
+                geo.setStyle({
+                  color: 'blue',
+                  fillColor: 'white',
+                  fillRule: 'nonzero',
+                  fillOpacity: 0.1,
+                  weight: 1,
+                });
+              });
+
 
               this.geoLayerGroup.addLayer(geo);
 
@@ -281,7 +299,11 @@ export default class Map {
       if (this.possibleClick === true) {
         this.possibleClick = false;
         handler(this.countryNow);
+        setTimeout(() => {
+          document.querySelector('#mapid').click();
+        }, 800)
       }
+
     });
   }
 }
