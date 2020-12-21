@@ -3,6 +3,7 @@ import SELECTS from './const/selects';
 import DATASET_INDEXES from './const/dataset-indexes';
 import PARAMETERS from './const/parameters';
 import Switchers from './switchers';
+import addCommas from './utils/add-commas';
 
 /**
  * Class representing the Covid Map.
@@ -154,7 +155,7 @@ export default class Map {
               const geo = L.geoJSON(dataEl, this.geoOptions)
                 .bindPopup(new L.Popup(this.popupOptions)
                   .setLatLng([element.countryInfo.lat, element.countryInfo.long])
-                  .setContent(`<h2 class = 'map__country_name'>${element.country}</h2><p class = 'map__country_value'>${countPerson} people</p>`))
+                  .setContent(`<h2 class = 'map__country_name'>${element.country}</h2><p class = 'map__country_value'>${addCommas(countPerson)} people</p>`))
                 .addTo(this.map);
               this.geoLayerGroup.addLayer(geo);
             })
@@ -168,7 +169,7 @@ export default class Map {
                 .bindPopup(new L.Popup(this.popupOptions)
                   .setLatLng([element.countryInfo.lat, element.countryInfo.long])
                   .setContent(`<h2 class = 'map__country_name'>${element.country}</h2>
-                  <p class = 'map__country_value'>${countPerson} people</p>`));
+                  <p class = 'map__country_value'>${addCommas(countPerson)} people</p>`));
 
               this.circleLayerGroup.addLayer(circle);
               this.saveEl.push(element.countryInfo.iso3);
