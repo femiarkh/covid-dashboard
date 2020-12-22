@@ -3,6 +3,7 @@ import SELECTS from './const/selects';
 import DATASET_INDEXES from './const/dataset-indexes';
 import PARAMETERS from './const/parameters';
 import Switchers from './switchers';
+import FullScreenButton from './full-screen-button';
 import addCommas from './utils/add-commas';
 
 /**
@@ -184,7 +185,6 @@ export default class Map {
                 });
               });
 
-
               this.geoLayerGroup.addLayer(geo);
 
               const circle = L.circle([element.countryInfo.lat, element.countryInfo.long],
@@ -246,6 +246,9 @@ export default class Map {
 
     this.createMapLegend();
     this.switchersContainer = this.mapBody.querySelector('.switchers');
+    this.switchersContainer.append(new FullScreenButton().element);
+    this.fullScreenButton = this.mapBody.querySelector('.full-screen-button');
+    this.bindFullScreen();
     this.createMapBody(country, dataPromise);
   }
 
@@ -301,9 +304,17 @@ export default class Map {
         handler(this.countryNow);
         setTimeout(() => {
           document.querySelector('#mapid').click();
-        }, 800)
+        }, 800);
       }
+    });
+  }
 
+  /**
+   * Expand or shrink the list when full screen button is clicked.
+   */
+  bindFullScreen() {
+    this.fullScreenButton.addEventListener('click', () => {
+      this.map.toggleFullscreen();
     });
   }
 }
