@@ -23,8 +23,10 @@ class App {
     this.country = null;
     this.name = 'Covid-19 Dashboard';
     this.header = createElement('h1', 'app-name', this.name);
+    this.subheader = createElement('h2', 'update-date', '');
     this.container = document.getElementById('root');
     this.saveDataPromise();
+    this.updateDate();
     this.table.updateData(this.country, this.dataPromise);
     this.chart.buildChart(this.country, this.dataPromise);
     this.list.createList(this.country, this.dataPromise);
@@ -68,12 +70,39 @@ class App {
   }
 
   /**
+   * Put updated date returned by API to the subheader of the app.
+   */
+  updateDate() {
+    function formatUpdateDate(date) {
+      const PM_BOUNDARY = 12;
+      const ZERO_HOUR = 0;
+      const realHours = date.getHours();
+      const isAM = realHours < PM_BOUNDARY;
+      const amPM = isAM ? 'AM' : 'PM';
+      let hours;
+      if (isAM) {
+        hours = realHours === ZERO_HOUR ? PM_BOUNDARY : realHours;
+      } else {
+        hours = realHours === PM_BOUNDARY ? PM_BOUNDARY : realHours - PM_BOUNDARY;
+      }
+      const month = date.getMonth() + 1;
+      return `${month}/${date.getDate()}/${date.getFullYear()}, ${hours}:${date.getMinutes()}${amPM}`;
+    }
+    this.dataPromise
+      .then((datasets) => new Date(datasets[0].updated))
+      .then((date) => {
+        this.subheader.innerHTML = `(Last Updated at ${formatUpdateDate(date)})`;
+      });
+  }
+
+  /**
    * Handler for updating all the data in the app.
    * @param {string} select - Name of the switched select.
    * @param {string} option - Name of a new option of the select.
    */
   updateDataHandler(select, option) {
     this.saveDataPromise(this.country);
+    this.updateDate();
     this.observers.forEach((observer) => {
       if (!observer) {
         return;
@@ -102,6 +131,7 @@ class App {
 
 const app = new App(new CovidTable(), new CovidChart(), new CovidList(), new CovidMap());
 app.container.append(app.header);
+app.container.append(app.subheader);
 app.container.append(app.table.element);
 app.container.append(app.chart.element);
 app.container.append(app.list.listBody);
