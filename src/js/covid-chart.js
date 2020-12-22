@@ -1,5 +1,6 @@
 import createElement from './utils/create-element';
 import Switchers from './switchers';
+import FullScreenButton from './full-screen-button';
 import SELECTS from './const/selects';
 import PARAMETERS from './const/parameters';
 import DATASET_INDEXES from './const/dataset-indexes';
@@ -27,6 +28,9 @@ export default class CovidChart {
     this.ctx = this.canvas.getContext('2d');
     this.currentChart = null;
     this.switchersContainer = this.element.querySelector('.switchers');
+    this.switchersContainer.append(new FullScreenButton().element);
+    this.fullScreenButton = this.element.querySelector('.full-screen-button');
+    this.bindFullScreen();
 
     this.country = null;
     this.valueName = PARAMETERS.valueName.cases;
@@ -128,5 +132,15 @@ export default class CovidChart {
   updateData(country, dataPromise) {
     this.currentChart.destroy();
     this.buildChart(country, dataPromise);
+  }
+
+  /**
+   * Expand or shrink the chart when full screen button is clicked.
+   */
+  bindFullScreen() {
+    this.fullScreenButton.addEventListener('click', () => {
+      this.element.classList.toggle('covid-chart--full');
+      this.fullScreenButton.classList.toggle('full-screen-button--active');
+    });
   }
 }

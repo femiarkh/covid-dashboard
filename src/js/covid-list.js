@@ -3,6 +3,7 @@ import SELECTS from './const/selects';
 import DATASET_INDEXES from './const/dataset-indexes';
 import PARAMETERS from './const/parameters';
 import Switchers from './switchers';
+import FullScreenButton from './full-screen-button';
 import addCommas from './utils/add-commas';
 
 /**
@@ -223,13 +224,14 @@ export default class List {
     this.clickInputCountry();
     this.blurInputCountry();
     this.keyPressInputCountry();
-
     this.listBody.append(createElement('div', 'list__sortingСriteria', ''));
     this.createQueryCountry();
-
     this.listBody.append(createElement('div', 'list__listCountry', ''));
     this.createListCountry(country, dataPromise);
     this.switchersContainer = this.listBody.querySelector('.switchers');
+    this.switchersContainer.append(new FullScreenButton().element);
+    this.fullScreenButton = this.listBody.querySelector('.full-screen-button');
+    this.bindFullScreen();
   }
 
   bindSelectChange(handler) {
@@ -249,6 +251,16 @@ export default class List {
       }
       const countryName = countryEl.querySelector('.countryEl__name').textContent;
       handler(countryName);
+    });
+  }
+
+  /**
+   * Expand or shrink the list when full screen button is clicked.
+   */
+  bindFullScreen() {
+    this.fullScreenButton.addEventListener('click', () => {
+      this.listBody.classList.toggle('covid-list--full');
+      this.fullScreenButton.classList.toggle('full-screen-button--active');
     });
   }
 }

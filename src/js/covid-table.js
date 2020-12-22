@@ -1,5 +1,6 @@
 import createElement from './utils/create-element';
 import Switchers from './switchers';
+import FullScreenButton from './full-screen-button';
 import SELECTS from './const/selects';
 import PARAMETERS from './const/parameters';
 import DATASET_INDEXES from './const/dataset-indexes';
@@ -12,11 +13,13 @@ import countPer100k from './utils/count-per-100k';
  */
 function getCovidTableMarkup() {
   const switchers = new Switchers(SELECTS.tableSelects).element;
+  const fullScreenButton = new FullScreenButton().element;
   return `<tr><th class="covid-table__location" colspan="2">All the world</th></tr>
           <tr>
             <td class="covid-table__switchers" colspan="2">
               <div class="switchers">
                 ${switchers.innerHTML}
+                ${fullScreenButton.outerHTML}
               </div>
             </td>
           </tr>
@@ -45,6 +48,8 @@ export default class CovidTable {
     this.casesContainer = this.element.querySelector('.covid-table__stat-value--cases');
     this.deathsContainer = this.element.querySelector('.covid-table__stat-value--deaths');
     this.recoveredContainer = this.element.querySelector('.covid-table__stat-value--recovered');
+    this.fullScreenButton = this.element.querySelector('.full-screen-button');
+    this.bindFullScreen();
 
     this.country = null;
     this.period = PARAMETERS.period.allTime;
@@ -103,6 +108,16 @@ export default class CovidTable {
     this.switchersContainer.addEventListener('change', (evt) => {
       this[evt.target.name] = evt.target.value;
       handler(evt.target.name, evt.target.value);
+    });
+  }
+
+  /**
+   * Expand or shrink the table when full screen button is clicked.
+   */
+  bindFullScreen() {
+    this.fullScreenButton.addEventListener('click', () => {
+      this.element.classList.toggle('covid-table--full');
+      this.fullScreenButton.classList.toggle('full-screen-button--active');
     });
   }
 }
