@@ -5,6 +5,7 @@ import CovidList from './js/covid-list';
 import CovidMap from './js/covid-map';
 import createElement from './js/utils/create-element';
 import URLS from './js/const/api-urls';
+import keyboard from './js/keyboard';
 
 /**
  * Class representing Covid Dashboard app.
@@ -136,3 +137,7 @@ app.container.append(app.table.element);
 app.container.append(app.chart.element);
 app.container.append(app.list.listBody);
 app.container.append(app.map.mapBody);
+
+window.addEventListener('DOMContentLoaded', () => {
+  keyboard.init();
+});

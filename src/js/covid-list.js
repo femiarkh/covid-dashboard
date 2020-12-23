@@ -139,7 +139,7 @@ export default class List {
   * Change the appearance of the list.
   */
   clearFocus() {
-    this.listBody.querySelector('.list__inputCountry').value = '[enter country]';
+    this.listBody.querySelector('.list__inputCountry').placeholder = '[enter country]';
 
     if (this.listBody.querySelector('.searchBody')) {
       this.listBody.querySelector('.searchBody').remove();
@@ -186,6 +186,7 @@ export default class List {
   clickInputCountry() {
     this.listBody.querySelector('.list__inputCountry').addEventListener('click', () => {
       this.setFocus();
+      this.virtualKeyPressInputCountry();
     });
   }
 
@@ -211,6 +212,19 @@ export default class List {
   }
 
   /**
+   * Event listener for virtual keyboard.
+   */
+  virtualKeyPressInputCountry() {
+    const keyboard = document.querySelector('.keyboard__keys');
+    keyboard.addEventListener('click', (evt) => {
+      if (/^[a-zA-Z]$/.test(evt.target.textContent)) {
+        const ev = { key: evt.target.textContent };
+        this.changeSearch(ev);
+      }
+    });
+  }
+
+  /**
   * Get markup for the body list.
   */
   createList(country, dataPromise) {
@@ -218,8 +232,9 @@ export default class List {
 
     this.listBody.append(createElement('div', 'list__queryCountry', ''));
     this.listBody.querySelector('.list__queryCountry').append(createElement('input', 'list__inputCountry', ''));
-    this.listBody.querySelector('.list__inputCountry').value = '[enter country]';
+    this.listBody.querySelector('.list__inputCountry').placeholder = '[enter country]';
     this.listBody.querySelector('.list__inputCountry').setAttribute('contenteditable', 'true');
+    this.listBody.querySelector('.list__inputCountry').classList.add('use-keyboard-input');
 
     this.clickInputCountry();
     this.blurInputCountry();
