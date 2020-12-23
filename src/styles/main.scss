@@ -3,7 +3,7 @@
 $font-color: #1a1a1a;
 $borders-color: #000;
 $headers-background: #d2dccb;
-$main-background: #fcfbf2;
+$main-background: #fff;
 
 * {
   box-sizing: border-box;
@@ -12,19 +12,24 @@ $main-background: #fcfbf2;
 }
 
 html {
-  font-family: "Roboto", Verdana, Arial, sans-serif;
-  font-size: 10px;
+  font-family: "Noto Sans JP", Verdana, Arial, sans-serif;
+  font-size: 9px;
   color: $font-color;
 }
 
 body {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  max-width: 1280px;
+  max-width: 128rem;
   min-height: 100vh;
   margin: 0 auto;
+  overflow: hidden;
+  background-image: url("../assets/images/background.jpg");
+  background-size: contain;
 }
 
 .visually-hidden {
@@ -41,50 +46,65 @@ body {
 #root {
   position: relative;
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  gap: 0 0;
+  grid-template-areas:
+    "tabl Chart Chart list"
+    "tabl Chart Chart list"
+    "map map map list"
+    "map map map list"
+    "map map map list"
+    "map map map list";
 }
 
 .app-name {
-  width: 100%;
-  margin-bottom: 10px;
-  font-size: 4rem;
+  margin-bottom: 2rem;
+  font-size: 3rem;
   text-align: center;
+  font-weight: 200;
+  position: fixed;
+  top: 0;
+  left: 5rem;
 }
 
 .update-date {
-  width: 100%;
   margin-bottom: 30px;
   font-size: 2rem;
   text-align: center;
+  position: fixed;
+  top: 0;
+  right: 5rem;
 }
 
 .covid-table {
+  height: 100%;
   position: relative;
-  width: 25%;
-  margin-right: 40px;
-  font-size: 2.4rem;
-  border: 1px solid $borders-color;
+  font-size: 2rem;
+  border: 5px solid $main-background;
   border-collapse: collapse;
-  transition: 1s;
+  grid-area: tabl;
 }
 
 .covid-table--full {
+  grid-area: none;
   position: absolute;
-  z-index: 10;
-  left: 0;
-  right: 0;
   top: 0;
   bottom: 0;
   width: 100%;
   height: 100vh;
-  transition: 1s;
+  font-size: 3rem;
+  z-index: 230;
+  border: 1.5rem solid black;
 }
 
 .covid-table__location {
-  padding: 10px;
-  border: 1px solid $borders-color;
-  background-color: $headers-background;
+  font-size: 3rem;
+  font-weight: 300;
+  padding: 1rem;
+  background-color: $main-background;
 }
 
 .covid-table__switchers {
@@ -93,7 +113,7 @@ body {
 }
 
 .covid-table__row td {
-  padding: 24px;
+  padding: 0.5rem;
   background-color: $main-background;
 }
 
@@ -102,12 +122,18 @@ body {
 }
 
 .covid-chart {
-  width: 45%;
+  grid-area: Chart;
   background-color: #fff;
-  transition: 1s;
+}
+
+.chart__bodyCanvas {
+  width: 100%;
+  height: 70%;
+  position: relative;
 }
 
 .covid-chart--full {
+  grid-area: none;
   position: absolute;
   z-index: 10;
   right: 0;
@@ -115,44 +141,44 @@ body {
   bottom: 0;
   width: 100%;
   height: 100vh;
-  transition: 1s;
+  transition: 0.5s;
 }
 
 .list {
-  height: 40rem;
-  width: 35rem;
+  grid-area: list;
+  height: 100%;
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
-  -webkit-box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
-  box-shadow: 0 12px 27px -4px rgba(0, 0, 0, 0.75);
+  align-items: center;
   background-color: $main-background;
-  transition: 1s ease all;
 
   &__queryCountry {
     z-index: 6;
-    margin-bottom: 1rem;
   }
 
   &__inputCountry {
     box-sizing: border-box;
     width: 100%;
+    font-weight: 200;
+    padding-left: 2rem;
     height: 4rem;
     font-size: 2rem;
+    border-radius: 2rem;
   }
 
   &__listCountry {
-    top: 0;
-    transition: 0.75s ease all;
+    transition: 1s ease all;
     background-repeat: no-repeat;
     background-position: center;
     position: relative;
+    width: 100%;
   }
 
   .listCountry__countryEl {
     margin-top: 1rem;
     display: flex;
+    width: 100%;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1rem;
@@ -168,26 +194,27 @@ body {
   }
 
   .countryEl__Img {
-    width: 10rem;
-    height: 5.7rem;
     box-sizing: border-box;
-    border: 1px solid black;
-    border-radius: 2rem;
+    border: 4px solid rgb(255, 255, 255);
+    width: 6rem;
+    height: 5rem;
+    border-radius: 4rem;
   }
 
   .countryEl__name {
-    font-size: 1.8rem;
-    font-weight: 600;
+    font-size: 2.2rem;
+    font-weight: 300;
     text-align: center;
   }
 
   .countryEl__count {
     font-size: 1.55rem;
-    font-weight: 300;
+    font-weight: 200;
   }
 }
 
 .covid-list--full {
+  grid-area: none;
   position: absolute;
   z-index: 10;
   top: 0;
@@ -196,21 +223,29 @@ body {
   right: 0;
   width: 100%;
   height: 100vh;
-  transition: 1s;
 }
 
 .switchers {
   transition: 0.75s ease all;
+  background-color: #fff;
   z-index: 4;
+  width: 100%;
   top: 0;
   display: flex;
   justify-content: space-around;
   position: relative;
+  align-items: center;
 
   &__switcher {
-    width: 32%;
-    height: 4rem;
-    font-size: 2rem;
+    border-radius: 2rem;
+    width: 30%;
+    height: 3rem;
+    font-size: 1.5rem;
+
+    option {
+      border-radius: 2rem;
+      padding-left: 1rem;
+    }
   }
 }
 
@@ -226,10 +261,11 @@ body {
 }
 
 #contMapid {
-  width: 70rem;
-  height: 40rem;
+  width: 100%;
+  height: 100%;
   z-index: 100;
   position: relative;
+  overflow: hidden;
 }
 
 #mapid {
@@ -243,8 +279,7 @@ body {
 }
 
 .map {
-  display: flex;
-  flex-direction: column;
+  grid-area: map;
   position: relative;
   z-index: 5;
 
@@ -254,7 +289,7 @@ body {
   }
 
   &__country_value {
-    margin: 0.6rem 0;
+    margin: 0.2rem 0;
     text-align: center;
     font-size: 1.5rem;
     font-weight: 500;
@@ -269,7 +304,7 @@ body {
     height: 12rem;
     background-color: #222222de;
     position: relative;
-    top: -12rem;
+    top: -30rem;
     right: 0;
     z-index: 1000;
     align-self: flex-end;
@@ -318,10 +353,6 @@ body {
   opacity: 0;
 }
 
-.listFS {
-  width: auto;
-}
-
 .mapNS {
   width: 0;
 }
@@ -330,18 +361,9 @@ body {
   display: none;
 }
 
-.switchUp {
-  top: -6rem;
-}
-
-.mapFS {
-  width: 100vw;
-  height: 100vh;
-}
-
 .full-screen-button {
-  width: 40px;
-  height: 40px;
+  width: 4rem;
+  height: 4rem;
   background-color: transparent;
   background-image: url("../assets/icons/fullscreen.svg");
   background-size: cover;
@@ -366,22 +388,124 @@ body {
 .app-footer {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  justify-content: space-around;
   align-items: center;
-  padding: 20px;
+  padding: 0.5rem;
   background-color: $main-background;
   font-size: 2rem;
+  z-index: 200;
 }
 
 .github {
   text-align: center;
+  display: flex;
 }
 
 .github__user {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
+  padding: 1rem;
 }
 
 .github__user a {
   text-decoration: none;
   color: #000;
+}
+
+.load {
+  background-image: url("../assets/images/load.gif");
+  background-size: 10rem 10rem;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.leaflet-popup-content {
+  width: auto;
+
+  p {
+    margin: 0.1rem;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  html {
+    font-size: 7px;
+  }
+
+  #root {
+    grid-template-areas:
+      "tabl Chart Chart list"
+      "tabl Chart Chart list"
+      "map map map list"
+      "map map map list"
+      "map map map list";
+  }
+}
+
+@media screen and (max-width: 690px) {
+  #root {
+    grid-template-areas:
+      "tabl Chart Chart Chart"
+      "tabl Chart Chart Chart"
+      "map map map list"
+      "map map map list"
+      "map map map list";
+  }
+
+  .list .countryEl__Img {
+    width: 3rem;
+    height: 2.5rem;
+  }
+
+  .list .countryEl__name {
+    font-size: 1.4rem;
+  }
+
+  .list .listCountry__countryEl {
+    padding: 0;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .chart__bodyCanvas {
+    height: 80%;
+  }
+
+  #root {
+    grid-template-areas:
+      "tabl Chart Chart Chart"
+      "tabl Chart Chart Chart"
+      "map map list list"
+      "map map list list"
+      "map map list list";
+  }
+
+  .list .countryEl__Img {
+    width: 5rem;
+    height: 4rem;
+  }
+
+  .list .countryEl__name {
+    font-size: 1.7rem;
+  }
+
+  .list .listCountry__countryEl {
+    padding: 0.5rem;
+  }
+
+  .update-date {
+    font-size: 1.5rem;
+  }
+
+  .covid-table .covid-table__stat-name td {
+    font-size: 1.8rem;
+    padding: 1rem;
+  }
+
+  .covid-table .covid-table__row td {
+    font-size: 1.8rem;
+    padding: 1rem;
+  }
 }

@@ -7,6 +7,7 @@ import DATASET_INDEXES from './const/dataset-indexes';
 import addCommas from './utils/add-commas';
 import countPer100k from './utils/count-per-100k';
 import Chart from '../../node_modules/chart.js/dist/Chart.bundle';
+import keyboard from './keyboard';
 
 /**
  * Get markup for the Covid Chart.
@@ -15,7 +16,7 @@ import Chart from '../../node_modules/chart.js/dist/Chart.bundle';
 function getCovidChartMarkup() {
   const switchers = new Switchers(SELECTS.chartSelects).element;
   return `${switchers.outerHTML}
-          <canvas class="covid-chart__canvas" width="400"></canvas>`;
+          <div class = "chart__bodyCanvas"><canvas class="covid-chart__canvas" ></canvas></div>`;
 }
 
 /**
@@ -45,6 +46,7 @@ export default class CovidChart {
    * @returns {object} The chart.
    */
   buildChart(country, dataPromise) {
+    this.element.classList.toggle('load');
     dataPromise
       .then((datasets) => {
         let historicalData;
@@ -74,14 +76,15 @@ export default class CovidChart {
             labels: dataLabels,
             datasets: [{
               label: `${this.country || 'All the world'}`,
-              backgroundColor: 'rgb(124, 154, 105)',
-              borderColor: 'rgb(124, 154, 105)',
+              backgroundColor: 'rgb(227, 10, 23)',
+              borderColor: 'rgb(227, 10, 23)',
               data: dataValues,
             }],
           },
           options: {
             responsive: true,
-            aspectRatio: 2,
+            aspectRatio: 1.5,
+            maintainAspectRatio: false,
             scales: {
               xAxes: [{
                 type: 'time',
@@ -110,7 +113,7 @@ export default class CovidChart {
           },
         });
         this.currentChart = chart;
-      });
+      }).then(() => this.element.classList.toggle('load'));
   }
 
   /**
@@ -141,6 +144,7 @@ export default class CovidChart {
     this.fullScreenButton.addEventListener('click', () => {
       this.element.classList.toggle('covid-chart--full');
       this.fullScreenButton.classList.toggle('full-screen-button--active');
+      keyboard.close();
     });
   }
 }

@@ -6,6 +6,7 @@ import PARAMETERS from './const/parameters';
 import DATASET_INDEXES from './const/dataset-indexes';
 import addCommas from './utils/add-commas';
 import countPer100k from './utils/count-per-100k';
+import keyboard from './keyboard';
 
 /**
  * Get markup for the Covid Table.
@@ -118,6 +119,7 @@ export default class CovidTable {
     this.fullScreenButton.addEventListener('click', () => {
       this.element.classList.toggle('covid-table--full');
       this.fullScreenButton.classList.toggle('full-screen-button--active');
+      keyboard.close();
     });
   }
 }

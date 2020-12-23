@@ -1,7 +1,6 @@
 .keyboard {
   flex-wrap: nowrap;
   position: fixed;
-  right: 0;
   bottom: 0;
   width: 100%;
   max-width: 1200px;
@@ -11,7 +10,7 @@
   border-radius: 20px;
   user-select: none;
   transition: bottom 0.4s;
-  z-index: 11;
+  z-index: 250;
 }
 
 .keyboard--hidden {
@@ -25,7 +24,7 @@
 .keyboard__key {
   display: inline-flex !important;
   justify-content: space-around !important;
-  height: 45px;
+  height: 65px;
   width: 6%;
   max-width: 90px;
   margin: 3px;

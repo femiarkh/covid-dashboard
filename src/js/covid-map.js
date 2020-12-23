@@ -5,6 +5,7 @@ import PARAMETERS from './const/parameters';
 import Switchers from './switchers';
 import FullScreenButton from './full-screen-button';
 import addCommas from './utils/add-commas';
+import keyboard from './keyboard';
 
 /**
  * Class representing the Covid Map.
@@ -37,8 +38,8 @@ export default class Map {
       color: 'blue',
       fillColor: 'white',
       fillRule: 'nonzero',
-      fillOpacity: 0.1,
-      weight: 1,
+      fillOpacity: 0,
+      weight: 0.5,
     };
     this.popupOptions = {
       closeButton: false,
@@ -96,7 +97,7 @@ export default class Map {
    * @param {coordinate} - takes coordinates.
    */
   changeLocate(lat, long) {
-    this.map.setView(new L.LatLng(lat, long), 2.5);
+    this.map.setView(new L.LatLng(lat, long), 2);
   }
 
   /**
@@ -104,6 +105,7 @@ export default class Map {
    * @param {string} - value from first,second,third select.
    */
   createMapBody(country, dataPromise) {
+    document.querySelector('#mapid').click();
     this.dataPromise = dataPromise;
     const valueName = this.returnSwitchersEl(0);
     const period = this.returnSwitchersEl(1);
@@ -171,8 +173,7 @@ export default class Map {
                 geo.setStyle({
                   color: 'red',
                   fillColor: 'white',
-                  fillOpacity: 0.2,
-                  weight: 3,
+                  fillOpacity: 0.3,
                 });
               });
               geo.on('mouseout', () => {
@@ -180,9 +181,9 @@ export default class Map {
                   color: 'blue',
                   fillColor: 'white',
                   fillRule: 'nonzero',
-                  fillOpacity: 0.1,
-                  weight: 1,
+                  fillOpacity: 0,
                 });
+                document.querySelector('#mapid').click();
               });
 
               this.geoLayerGroup.addLayer(geo);
@@ -209,9 +210,6 @@ export default class Map {
       this.geoLayerGroup.addTo(this.map);
       this.circleLayerGroup.addTo(this.map);
     });
-    setTimeout(() => {
-      document.querySelector('#mapid').click();
-    }, 100);
   }
 
   /**
@@ -269,16 +267,11 @@ export default class Map {
     this.circleLayerGroup.clearLayers();
     this.createMapBody(country, dataPromise);
 
-    document.querySelector('#mapid').click();
-    document.querySelector('#mapid').click();
-    document.querySelector('#mapid').click();
-
     this.dataPromise.then((result) => {
       const data = result[DATASET_INDEXES.allCountries];
       const element = data.find((el) => el.country === country);
       if (element !== undefined) {
-        this.changeLocate(element.countryInfo.lat ? element.countryInfo.lat
-          : 0, element.countryInfo.long ? element.countryInfo.long : 0);
+        this.changeLocate(element.countryInfo.lat, element.countryInfo.long);
       }
 
       const allCountry = document.querySelectorAll('.listCountry__countryEl');
@@ -301,6 +294,9 @@ export default class Map {
   bindSelectChange(handler) {
     document.querySelectorAll('.switchers').forEach((el) => {
       el.addEventListener('change', (evt) => {
+        setTimeout(() => {
+          document.querySelector('#mapid').click();
+        }, 100);
         this[evt.target.name] = evt.target.value;
         handler(evt.target.name, evt.target.value);
       });
@@ -312,9 +308,9 @@ export default class Map {
       if (this.possibleClick === true) {
         this.possibleClick = false;
         handler(this.countryNow);
-        setTimeout(() => {
-          document.querySelector('#mapid').click();
-        }, 800);
+        if (document.querySelector('.leaflet-fullscreen-on')) {
+          this.map.toggleFullscreen();
+        }
       }
     });
   }
@@ -326,6 +322,7 @@ export default class Map {
     this.fullScreenButton.addEventListener('click', () => {
       this.map.toggleFullscreen();
       document.querySelector('#mapid').click();
+      keyboard.close();
     });
   }
 }
