@@ -171,7 +171,7 @@ export default class Map {
                 geo.setStyle({
                   color: 'red',
                   fillColor: 'white',
-                  fillOpacity: 0.2,
+                  fillOpacity: 0.3,
                 });
               });
               geo.on('mouseout', () => {
