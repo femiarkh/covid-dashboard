@@ -37,8 +37,8 @@ export default class Map {
       color: 'blue',
       fillColor: 'white',
       fillRule: 'nonzero',
-      fillOpacity: 0.1,
-      weight: 1,
+      fillOpacity: 0,
+      weight: 0.5,
     };
     this.popupOptions = {
       closeButton: false,
@@ -96,7 +96,7 @@ export default class Map {
    * @param {coordinate} - takes coordinates.
    */
   changeLocate(lat, long) {
-    this.map.setView(new L.LatLng(lat, long), 2.5);
+    this.map.setView(new L.LatLng(lat, long), 2);
   }
 
   /**
@@ -171,8 +171,7 @@ export default class Map {
                 geo.setStyle({
                   color: 'red',
                   fillColor: 'white',
-                  fillOpacity: 0.2,
-                  weight: 3,
+                  fillOpacity: 0.3,
                 });
               });
               geo.on('mouseout', () => {
@@ -180,9 +179,9 @@ export default class Map {
                   color: 'blue',
                   fillColor: 'white',
                   fillRule: 'nonzero',
-                  fillOpacity: 0.1,
-                  weight: 1,
+                  fillOpacity: 0,
                 });
+                document.querySelector('#mapid').click();
               });
 
               this.geoLayerGroup.addLayer(geo);
@@ -270,19 +269,17 @@ export default class Map {
     this.createMapBody(country, dataPromise);
 
     document.querySelector('#mapid').click();
-    document.querySelector('#mapid').click();
-    document.querySelector('#mapid').click();
 
     this.dataPromise.then((result) => {
       const data = result[DATASET_INDEXES.allCountries];
       const element = data.find((el) => el.country === country);
       if (element !== undefined) {
-        this.changeLocate(element.countryInfo.lat ? element.countryInfo.lat
-          : 0, element.countryInfo.long ? element.countryInfo.long : 0);
+        this.changeLocate(element.countryInfo.lat, element.countryInfo.long);
       }
 
       const allCountry = document.querySelectorAll('.listCountry__countryEl');
       allCountry.forEach((el) => {
+
         if (el.querySelector('.countryEl__name').innerText === country) {
           new L.Popup(this.popupOptions)
             .setLatLng([element.countryInfo.lat, element.countryInfo.long])
@@ -301,6 +298,9 @@ export default class Map {
   bindSelectChange(handler) {
     document.querySelectorAll('.switchers').forEach((el) => {
       el.addEventListener('change', (evt) => {
+        setTimeout(() => {
+          document.querySelector('#mapid').click();
+        }, 100);
         this[evt.target.name] = evt.target.value;
         handler(evt.target.name, evt.target.value);
       });
@@ -312,9 +312,9 @@ export default class Map {
       if (this.possibleClick === true) {
         this.possibleClick = false;
         handler(this.countryNow);
-        setTimeout(() => {
-          document.querySelector('#mapid').click();
-        }, 800);
+        if (document.querySelector('.leaflet-fullscreen-on')) {
+          this.map.toggleFullscreen();
+        }
       }
     });
   }

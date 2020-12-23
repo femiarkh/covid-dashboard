@@ -59,9 +59,6 @@ export default class List {
    */
     this.setFocus = () => {
       this.listBody.querySelector('.list__inputCountry').value = '';
-      this.listBody.classList.toggle('listFS');
-      this.listBody.querySelector('.switchers').classList.toggle('switchUp');
-      this.listBody.querySelector('.list__listCountry').classList.toggle('switchUp');
     };
   }
 
@@ -83,7 +80,7 @@ export default class List {
     if (periodNow) {
       valueNameNow = periodNow + valueName[0].toUpperCase() + valueName.slice(1);
     }
-
+    this.listBody.classList.toggle('load');
     this.dataPromise.then((result) => {
       let data;
       const currentPeriod = this.listBody.querySelector('.switchers__switcher--period').value;
@@ -124,6 +121,8 @@ export default class List {
     <span class ='countryEl__count'>${addCommas(countPerson)}</span>`;
           this.listBody.querySelector('.list__listCountry').append(countryEl);
         });
+    }).then(() => {
+      this.listBody.classList.toggle('load');
     });
   }
 

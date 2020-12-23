@@ -15,7 +15,7 @@ import Chart from '../../node_modules/chart.js/dist/Chart.bundle';
 function getCovidChartMarkup() {
   const switchers = new Switchers(SELECTS.chartSelects).element;
   return `${switchers.outerHTML}
-          <canvas class="covid-chart__canvas" width="400"></canvas>`;
+          <div class = "chart__bodyCanvas"><canvas class="covid-chart__canvas" ></canvas></div>`;
 }
 
 /**
@@ -45,6 +45,7 @@ export default class CovidChart {
    * @returns {object} The chart.
    */
   buildChart(country, dataPromise) {
+    this.element.classList.toggle('load');
     dataPromise
       .then((datasets) => {
         let historicalData;
@@ -74,8 +75,8 @@ export default class CovidChart {
             labels: dataLabels,
             datasets: [{
               label: `${this.country || 'All the world'}`,
-              backgroundColor: 'rgb(124, 154, 105)',
-              borderColor: 'rgb(124, 154, 105)',
+              backgroundColor: 'rgb(227, 10, 23)',
+              borderColor: 'rgb(227, 10, 23)',
               data: dataValues,
             }],
           },
@@ -110,7 +111,7 @@ export default class CovidChart {
           },
         });
         this.currentChart = chart;
-      });
+      }).then(() => this.element.classList.toggle('load'));
   }
 
   /**
