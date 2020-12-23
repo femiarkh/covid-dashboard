@@ -5,6 +5,7 @@ import PARAMETERS from './const/parameters';
 import Switchers from './switchers';
 import FullScreenButton from './full-screen-button';
 import addCommas from './utils/add-commas';
+import keyboard from './keyboard';
 
 /**
  * Class representing the Covid Map.
@@ -104,6 +105,7 @@ export default class Map {
    * @param {string} - value from first,second,third select.
    */
   createMapBody(country, dataPromise) {
+    document.querySelector('#mapid').click();
     this.dataPromise = dataPromise;
     const valueName = this.returnSwitchersEl(0);
     const period = this.returnSwitchersEl(1);
@@ -208,9 +210,6 @@ export default class Map {
       this.geoLayerGroup.addTo(this.map);
       this.circleLayerGroup.addTo(this.map);
     });
-    setTimeout(() => {
-      document.querySelector('#mapid').click();
-    }, 100);
   }
 
   /**
@@ -268,8 +267,6 @@ export default class Map {
     this.circleLayerGroup.clearLayers();
     this.createMapBody(country, dataPromise);
 
-    document.querySelector('#mapid').click();
-
     this.dataPromise.then((result) => {
       const data = result[DATASET_INDEXES.allCountries];
       const element = data.find((el) => el.country === country);
@@ -279,7 +276,6 @@ export default class Map {
 
       const allCountry = document.querySelectorAll('.listCountry__countryEl');
       allCountry.forEach((el) => {
-
         if (el.querySelector('.countryEl__name').innerText === country) {
           new L.Popup(this.popupOptions)
             .setLatLng([element.countryInfo.lat, element.countryInfo.long])
@@ -326,6 +322,7 @@ export default class Map {
     this.fullScreenButton.addEventListener('click', () => {
       this.map.toggleFullscreen();
       document.querySelector('#mapid').click();
+      keyboard.close();
     });
   }
 }

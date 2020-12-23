@@ -3,7 +3,7 @@
 $font-color: #1a1a1a;
 $borders-color: #000;
 $headers-background: #d2dccb;
-$main-background: #ffffff;
+$main-background: #fff;
 
 * {
   box-sizing: border-box;
@@ -43,25 +43,14 @@ body {
   overflow: hidden;
 }
 
-.visually-hidden {
-  position: absolute !important;
-  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
-  clip: rect(1px, 1px, 1px, 1px);
-  padding: 0 !important;
-  border: 0 !important;
-  height: 1px !important;
-  width: 1px !important;
-  overflow: hidden;
-}
-
 #root {
   position: relative;
   width: 100%;
   height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
-  gap: 0px 0px;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  gap: 0 0;
   grid-template-areas:
     "tabl Chart Chart list"
     "tabl Chart Chart list"
@@ -72,48 +61,48 @@ body {
 }
 
 .app-name {
-  width: 100%;
   margin-bottom: 2rem;
-  font-size: 2rem;
+  font-size: 3rem;
   text-align: center;
   font-weight: 200;
+  position: fixed;
+  top: 0;
+  left: 5rem;
 }
 
 .update-date {
-  width: 100%;
   margin-bottom: 30px;
   font-size: 2rem;
   text-align: center;
+  position: fixed;
+  top: 0;
+  right: 5rem;
 }
 
 .covid-table {
   height: 100%;
   position: relative;
   font-size: 2rem;
-  border: 3px solid $main-background;
+  border: 5px solid $main-background;
   border-collapse: collapse;
-  transition: 1s;
   grid-area: tabl;
 }
 
 .covid-table--full {
   grid-area: none;
   position: absolute;
-  z-index: 10;
-  left: 0;
-  right: 0;
   top: 0;
   bottom: 0;
   width: 100%;
   height: 100vh;
-  transition: 1s;
-  font-size: 4rem;
+  font-size: 3rem;
+  z-index: 230;
   border: 1.5rem solid black;
 }
 
 .covid-table__location {
-  font-size: 2.4rem;
-  font-weight: 800;
+  font-size: 3rem;
+  font-weight: 300;
   padding: 1rem;
   background-color: $main-background;
 }
@@ -124,7 +113,7 @@ body {
 }
 
 .covid-table__row td {
-  padding: 2.4rem;
+  padding: 0.5rem;
   background-color: $main-background;
 }
 
@@ -139,8 +128,10 @@ body {
 
 .chart__bodyCanvas {
   width: 100%;
+  height: 70%;
   position: relative;
 }
+
 .covid-chart--full {
   grid-area: none;
   position: absolute;
@@ -203,8 +194,6 @@ body {
   }
 
   .countryEl__Img {
-    width: 10rem;
-    height: 5.7rem;
     box-sizing: border-box;
     border: 4px solid rgb(255, 255, 255);
     width: 6rem;
@@ -234,13 +223,13 @@ body {
   right: 0;
   width: 100%;
   height: 100vh;
-  transition: 0.5s;
 }
 
 .switchers {
   transition: 0.75s ease all;
-  background-color: #ffffff;
+  background-color: #fff;
   z-index: 4;
+  width: 100%;
   top: 0;
   display: flex;
   justify-content: space-around;
@@ -252,6 +241,7 @@ body {
     width: 30%;
     height: 3rem;
     font-size: 1.5rem;
+
     option {
       border-radius: 2rem;
       padding-left: 1rem;
@@ -292,7 +282,7 @@ body {
   grid-area: map;
   position: relative;
   z-index: 5;
-  
+
   &__country_name {
     font-size: 2rem;
     text-align: center;
@@ -314,7 +304,7 @@ body {
     height: 12rem;
     background-color: #222222de;
     position: relative;
-    top: -22rem;
+    top: -30rem;
     right: 0;
     z-index: 1000;
     align-self: flex-end;
@@ -363,25 +353,12 @@ body {
   opacity: 0;
 }
 
-.listFS {
-  width: 75rem;
-}
-
 .mapNS {
   width: 0;
 }
 
 .mapSC {
   display: none;
-}
-
-.switchUp {
-  top: -6rem;
-}
-
-.mapFS {
-  width: 100vw;
-  height: 100vh;
 }
 
 .full-screen-button {
@@ -411,24 +388,32 @@ body {
 .app-footer {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  justify-content: space-around;
   align-items: center;
-  padding: 20px;
+  padding: 0.5rem;
   background-color: $main-background;
   font-size: 2rem;
+  z-index: 200;
 }
 
 .github {
   text-align: center;
+  display: flex;
 }
 
 .github__user {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
+  padding: 1rem;
 }
 
 .github__user a {
   text-decoration: none;
   color: #000;
+}
+
 .load {
   background-image: url("../assets/images/load.gif");
   background-size: 10rem 10rem;
@@ -438,6 +423,7 @@ body {
 
 .leaflet-popup-content {
   width: auto;
+
   p {
     margin: 0.1rem;
   }
@@ -447,71 +433,77 @@ body {
   html {
     font-size: 7px;
   }
-  .chart__bodyCanvas {
-    top: 15%;
-  }
+
   #root {
     grid-template-areas:
       "tabl Chart Chart list"
       "tabl Chart Chart list"
+      "map map map list"
       "map map map list"
       "map map map list";
   }
 }
 
 @media screen and (max-width: 690px) {
-  .chart__bodyCanvas {
-    top: 0;
-  }
   #root {
     grid-template-areas:
       "tabl Chart Chart Chart"
       "tabl Chart Chart Chart"
       "map map map list"
+      "map map map list"
       "map map map list";
   }
+
   .list .countryEl__Img {
     width: 3rem;
     height: 2.5rem;
   }
-  .list .countryEl__name {
-    font-size: 1.8rem;
-  }
+
   .list .countryEl__name {
     font-size: 1.4rem;
   }
+
   .list .listCountry__countryEl {
     padding: 0;
   }
 }
+
 @media screen and (max-width: 600px) {
   .chart__bodyCanvas {
-    top: 0;
+    height: 80%;
   }
+
   #root {
     grid-template-areas:
       "tabl Chart Chart Chart"
       "tabl Chart Chart Chart"
       "map map list list"
+      "map map list list"
       "map map list list";
   }
+
   .list .countryEl__Img {
     width: 5rem;
     height: 4rem;
   }
-  .list .countryEl__name {
-    font-size: 2.2rem;
-  }
+
   .list .countryEl__name {
     font-size: 1.7rem;
   }
+
   .list .listCountry__countryEl {
     padding: 0.5rem;
   }
+
+  .update-date {
+    font-size: 1.5rem;
+  }
+
   .covid-table .covid-table__stat-name td {
     font-size: 1.8rem;
     padding: 1rem;
   }
+
   .covid-table .covid-table__row td {
     font-size: 1.8rem;
     padding: 1rem;

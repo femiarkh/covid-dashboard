@@ -5,6 +5,7 @@ import PARAMETERS from './const/parameters';
 import Switchers from './switchers';
 import FullScreenButton from './full-screen-button';
 import addCommas from './utils/add-commas';
+import keyboard from './keyboard';
 
 /**
  * Get markup for the Covid List.
@@ -138,7 +139,7 @@ export default class List {
   * Change the appearance of the list.
   */
   clearFocus() {
-    this.listBody.querySelector('.list__inputCountry').placeholder = '[enter country]';
+    this.listBody.querySelector('.list__inputCountry').placeholder = 'Enter country...';
 
     if (this.listBody.querySelector('.searchBody')) {
       this.listBody.querySelector('.searchBody').remove();
@@ -214,9 +215,9 @@ export default class List {
    * Event listener for virtual keyboard.
    */
   virtualKeyPressInputCountry() {
-    const keyboard = document.querySelector('.keyboard__keys');
-    keyboard.addEventListener('click', (evt) => {
-      if (/^[a-zA-Z]$/.test(evt.target.textContent)) {
+    const keyboardes = document.querySelector('.keyboard__keys');
+    keyboardes.addEventListener('click', (evt) => {
+      if (/[^a-zA-Z]/g.test(evt.target.textContent)) {
         const ev = { key: evt.target.textContent };
         this.changeSearch(ev);
       }
@@ -231,7 +232,7 @@ export default class List {
 
     this.listBody.append(createElement('div', 'list__queryCountry', ''));
     this.listBody.querySelector('.list__queryCountry').append(createElement('input', 'list__inputCountry', ''));
-    this.listBody.querySelector('.list__inputCountry').placeholder = '[enter country]';
+    this.listBody.querySelector('.list__inputCountry').placeholder = 'Enter country...';
     this.listBody.querySelector('.list__inputCountry').setAttribute('contenteditable', 'true');
     this.listBody.querySelector('.list__inputCountry').classList.add('use-keyboard-input');
 
@@ -263,6 +264,8 @@ export default class List {
       if (!countryEl) {
         return;
       }
+      keyboard.close();
+      this.listBody.querySelector('.list__inputCountry').placeholder = 'Enter country...';
       const countryName = countryEl.querySelector('.countryEl__name').textContent;
       handler(countryName);
     });
@@ -275,6 +278,7 @@ export default class List {
     this.fullScreenButton.addEventListener('click', () => {
       this.listBody.classList.toggle('covid-list--full');
       this.fullScreenButton.classList.toggle('full-screen-button--active');
+      keyboard.close();
     });
   }
 }
