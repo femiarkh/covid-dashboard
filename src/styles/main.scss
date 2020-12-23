@@ -362,3 +362,26 @@ body {
     background-image: url("../assets/icons/fullscreen_exit.svg");
   }
 }
+
+.app-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: $main-background;
+  font-size: 2rem;
+}
+
+.github {
+  text-align: center;
+}
+
+.github__user {
+  font-size: 1.6rem;
+}
+
+.github__user a {
+  text-decoration: none;
+  color: #000;
+}

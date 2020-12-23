@@ -3,8 +3,10 @@ import CovidTable from './js/covid-table';
 import CovidChart from './js/covid-chart';
 import CovidList from './js/covid-list';
 import CovidMap from './js/covid-map';
+import Footer from './js/footer';
 import createElement from './js/utils/create-element';
 import URLS from './js/const/api-urls';
+import DATASET_INDEXES from './js/const/dataset-indexes';
 import keyboard from './js/keyboard';
 
 /**
@@ -25,6 +27,7 @@ class App {
     this.name = 'Covid-19 Dashboard';
     this.header = createElement('h1', 'app-name', this.name);
     this.subheader = createElement('h2', 'update-date', '');
+    this.footer = new Footer();
     this.container = document.getElementById('root');
     this.saveDataPromise();
     this.updateDate();
@@ -90,7 +93,7 @@ class App {
       return `${month}/${date.getDate()}/${date.getFullYear()}, ${hours}:${date.getMinutes()}${amPM}`;
     }
     this.dataPromise
-      .then((datasets) => new Date(datasets[0].updated))
+      .then((datasets) => new Date(datasets[DATASET_INDEXES.today].updated))
       .then((date) => {
         this.subheader.innerHTML = `(Last Updated at ${formatUpdateDate(date)})`;
       });
@@ -137,6 +140,7 @@ app.container.append(app.table.element);
 app.container.append(app.chart.element);
 app.container.append(app.list.listBody);
 app.container.append(app.map.mapBody);
+app.container.append(app.footer.element);
 
 window.addEventListener('DOMContentLoaded', () => {
   keyboard.init();
