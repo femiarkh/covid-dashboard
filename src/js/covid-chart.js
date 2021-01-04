@@ -4,10 +4,10 @@ import FullScreenButton from './full-screen-button';
 import SELECTS from './const/selects';
 import PARAMETERS from './const/parameters';
 import DATASET_INDEXES from './const/dataset-indexes';
-import addCommas from './utils/add-commas';
 import countPer100k from './utils/count-per-100k';
 import Chart from '../../node_modules/chart.js/dist/Chart.bundle';
 import keyboard from './keyboard';
+import getChartConfig from './covid-chart-config';
 
 /**
  * Get markup for the Covid Chart.
@@ -70,48 +70,7 @@ export default class CovidChart {
         if (this.valueType === PARAMETERS.valueType.per100k) {
           dataValues = dataValues.map((value) => countPer100k(value, population));
         }
-        const chart = new Chart(this.ctx, {
-          type: 'line',
-          data: {
-            labels: dataLabels,
-            datasets: [{
-              label: `${this.country || 'All the world'}`,
-              backgroundColor: 'rgb(227, 10, 23)',
-              borderColor: 'rgb(227, 10, 23)',
-              data: dataValues,
-            }],
-          },
-          options: {
-            responsive: true,
-            aspectRatio: 1.5,
-            maintainAspectRatio: false,
-            scales: {
-              xAxes: [{
-                type: 'time',
-                position: 'bottom',
-                offset: true,
-                time: {
-                  unit: 'month',
-                },
-              }],
-              yAxes: [{
-                ticks: {
-                  callback: (value) => addCommas(value),
-                },
-              }],
-            },
-            tooltips: {
-              callbacks: {
-                title: (tooltipItem) => {
-                  const TIME = ', 12:00:00 am';
-                  const timeLength = TIME.length;
-                  return tooltipItem[0].label.slice(0, -timeLength);
-                },
-                label: (tooltipItem) => addCommas(tooltipItem.yLabel),
-              },
-            },
-          },
-        });
+        const chart = new Chart(this.ctx, getChartConfig(this.country, dataLabels, dataValues));
         this.currentChart = chart;
       }).then(() => this.element.classList.toggle('load'));
   }
